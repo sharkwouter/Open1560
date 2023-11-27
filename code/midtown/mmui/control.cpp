@@ -33,12 +33,13 @@ void ControlSetup::POVCB()
 
 void ControlSetup::ControlSelect()
 {
-    // I don't know where the amount of connected devices should come from
-    GameInputPtr->Init(2);
-    // Here is a line of code missing. It refers to an undocumented function?
+    // i don't know where the amount of connected devices should come from
+    for (i32 i = 0; i < 5; ++i)
+        GameInput()->Init(i);
+    this->cwarray->Reset();
     this->cwarray->Redraw();
     this->ActivateDeviceOptions();
-    this->controlBase->InitSensitivity();
+    // this->controlBase->InitSensitivity();
     this->InitCustomControls();
 }
 

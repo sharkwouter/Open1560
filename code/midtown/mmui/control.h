@@ -127,15 +127,15 @@ public:
     ARTS_IMPORT void VerifyBadAssignment();
 
     // u8 gap6EC8[64]; 
-
+public:
     ControlBase* controlBase;
-    u8 gap6ECC[10];
+    u8 gap6ECC[16];
     mmMouseSteerBar* mouseSteerBar;
     UITextDropdown* textDropdown;
     UICWArray* cwarray;
     u8 gap6EE8[14];
     float unkownFloat;
-    u8 gap6F00[14];
+    u8 gap6F00[10];
 
     /*
     Variables that exist within this class:
