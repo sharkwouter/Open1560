@@ -51,6 +51,10 @@
 
 #include "optionsbase.h"
 
+#include "../mminput/input.h"
+#include "../mmui/controlbase.h"
+#include "../mmeffects/mousesteerbar.h"
+
 class ControlSetup final : public OptionsBase
 {
 public:
@@ -78,7 +82,7 @@ public:
     ARTS_IMPORT void ClearBadAssignment();
 
     // ?ControlSelect@ControlSetup@@QAEXXZ
-    ARTS_IMPORT void ControlSelect();
+    ARTS_EXPORT void ControlSelect();
 
     // ?CreateDeviceOptions@ControlSetup@@QAEXXZ
     ARTS_IMPORT void CreateDeviceOptions();
@@ -122,7 +126,37 @@ public:
     // ?VerifyBadAssignment@ControlSetup@@QAEXXZ
     ARTS_IMPORT void VerifyBadAssignment();
 
-    u8 gap6EC8[0x40];
+    // u8 gap6EC8[64]; 
+
+    ControlBase* controlBase;
+    u8 gap6ECC[10];
+    mmMouseSteerBar* mouseSteerBar;
+    UITextDropdown* textDropdown;
+    UICWArray* cwarray;
+    u8 gap6EE8[14];
+    float unkownFloat;
+    u8 gap6F00[14];
+
+    /*
+    Variables that exist within this class:
+    - ControlBase pointer 0x6ec8
+    - 14 values in between here
+    - mmMouseSteerBar pointer 0x6edc
+    - 4 values in between here
+    - UITextDropdown pointer 0x6ee0
+    - 4 values in between
+    - UICWArray pointer 0x6ee4
+    - 18 values in between
+    - float 0x6efc
+    - 12 values in between here
+
+    Additional notes:
+    We have 64 bytes to fill
+    A pointer int or float takes up 4 bytes
+    We probably have at least 16 variables in this class
+    */
 };
 
 check_size(ControlSetup, 0x6F08);
+
+ARTS_IMPORT extern mmInput* GameInputPtr;

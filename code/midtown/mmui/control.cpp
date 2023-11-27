@@ -20,11 +20,28 @@ define_dummy_symbol(mmui_control);
 
 #include "control.h"
 
+#include <iostream>
+
+#include "../data7/memstat.h"
+#include "../mmwidget/cwarray.h"
+
 void ControlSetup::DoneAction()
 {}
 
 void ControlSetup::POVCB()
 {}
+
+void ControlSetup::ControlSelect()
+{
+    // I don't know where the amount of connected devices should come from
+    GameInputPtr->Init(2);
+    // Here is a line of code missing. It refers to an undocumented function?
+    this->cwarray->Redraw();
+    this->ActivateDeviceOptions();
+    this->controlBase->InitSensitivity();
+    this->InitCustomControls();
+}
+
 
 // ?CalibrateWatcher@@YGKPAX@Z
 ARTS_IMPORT /*static*/ ulong ARTS_STDCALL CalibrateWatcher(void* arg1);
