@@ -19,3 +19,19 @@
 define_dummy_symbol(mmui_controlbase);
 
 #include "controlbase.h"
+
+void ControlBase::InitSensitivity()
+{
+    //(**(code**) (**(int**) (this + 0xc) + 0x40))();
+    //(**(code**) (**(int**) (this + 0x10) + 0x40))();
+    //switch (INPUT_DEVICE_SELECTED)
+    //{
+    //    case 0:
+    //    case 2:
+    //    case 4: *(float*) this = 1.0 / *(float*) (GameInputPtr + 0x1c4); break;
+    //    case 1:
+    //    case 3:
+    //        (**(code**) (**(int**) (this + 0xc) + 0x3c))();
+    //        (**(code**) (**(int**) (this + 0x10) + 0x3c))();
+    //}
+}

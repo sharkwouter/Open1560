@@ -37,7 +37,7 @@ public:
     ARTS_IMPORT ~ControlBase() = default;
 
     // ?InitSensitivity@ControlBase@@QAEXXZ
-    ARTS_IMPORT void InitSensitivity();
+    ARTS_EXPORT void InitSensitivity();
 
     // ?SetSensitivity@ControlBase@@QAEXXZ
     ARTS_IMPORT void SetSensitivity();
