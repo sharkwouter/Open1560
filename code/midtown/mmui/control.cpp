@@ -36,10 +36,10 @@ void ControlSetup::ControlSelect()
     // i don't know where the amount of connected devices should come from
     for (i32 i = 0; i < 5; ++i)
         GameInput()->Init(i);
-    this->cwarray->Reset();
+    this->cwarray->Load();
     this->cwarray->Redraw();
     this->ActivateDeviceOptions();
-    // this->controlBase->InitSensitivity();
+    this->controlBase->InitSensitivity();
     this->InitCustomControls();
 }
 
