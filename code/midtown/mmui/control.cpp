@@ -24,6 +24,7 @@ define_dummy_symbol(mmui_control);
 
 #include "../data7/memstat.h"
 #include "../mmwidget/cwarray.h"
+#include <mmcityinfo/state.h>
 
 void ControlSetup::DoneAction()
 {}
@@ -33,9 +34,7 @@ void ControlSetup::POVCB()
 
 void ControlSetup::ControlSelect()
 {
-    // i don't know where the amount of connected devices should come from
-    for (i32 i = 0; i < 5; ++i)
-        GameInput()->Init(i);
+    GameInput()->Init(static_cast<i32>(MMSTATE.InputType));
     this->cwarray->Load();
     this->cwarray->Redraw();
     this->ActivateDeviceOptions();

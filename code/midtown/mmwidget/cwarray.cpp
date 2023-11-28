@@ -21,11 +21,11 @@ define_dummy_symbol(mmwidget_cwarray);
 #include "cwarray.h"
 
 #include "mminput/input.h"
+#include <mmcityinfo/state.h>
 
 void UICWArray::DefaultCFG()
 {
-    for (i32 i = 0; i < 5; ++i)
-        GameInput()->SetDefaultConfig(i);
+    GameInput()->SetDefaultConfig(static_cast<i32>(MMSTATE.InputType));
 
     Redraw();
 }
