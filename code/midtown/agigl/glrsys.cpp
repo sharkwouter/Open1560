@@ -547,7 +547,7 @@ void main()
     {
         GLint buffer_size = 0;
         glGetProgramiv(shader_, GL_PROGRAM_BINARY_LENGTH, &buffer_size);
-        Ptr<u8[]> buffer = MakeUniqueUninit<u8[]>(buffer_size);
+        Ptr<u8[]> buffer = arnewa u8[buffer_size];
 
         GLsizei length = 0;
         GLenum binary_format = 0;
@@ -954,6 +954,12 @@ void agiGLRasterizer::FlushState()
     if (fog_mode != agiLastState.FogMode || fog_start != agiLastState.FogStart || fog_end != agiLastState.FogEnd ||
         fog_density != agiLastState.FogDensity)
     {
+        if (fog_mode != agiFogMode::None)
+        {
+            if (!shader_ && !agiGL->HasVersion(140))
+                fog_mode = agiFogMode::None;
+        }
+
         agiLastState.FogMode = fog_mode;
         agiLastState.FogStart = fog_start;
         agiLastState.FogEnd = fog_end;

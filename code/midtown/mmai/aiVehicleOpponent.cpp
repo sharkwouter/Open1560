@@ -23,11 +23,22 @@ define_dummy_symbol(mmai_aiVehicleOpponent);
 #include "agi/dlptmpl.h"
 #include "agi/getdlp.h"
 #include "agiworld/quality.h"
+#include "data7/str.h"
+#include "memory/allocator.h"
+#include "mmcar/trailer.h"
+#include "mmcity/cullcity.h"
+#include "mmcityinfo/vehlist.h"
+#include "mmphysics/joint3dof.h"
+#include "mmphysics/phys.h"
 
 #include "aiData.h"
 #include "aiGoalBackup.h"
 #include "aiGoalFollowWayPts.h"
 #include "aiGoalStop.h"
+#include "aiMap.h"
+
+static mem::cmd_param PARAM_detachopptrailermph {"detachopptrailermph"};
+static mem::cmd_param PARAM_maxoppcolors {"maxoppcolors"};
 
 void aiVehicleOpponent::DrawDamage()
 {}
@@ -38,10 +49,10 @@ void aiVehicleOpponent::Init(i32 opp_id, aiRaceData* race_data, char* race_name)
     if (agiRQ.TextureQuality)
         --agiRQ.TextureQuality;
 
-    i32 paint_job = opp_id & 3;
-    i32 index = opp_id + 1;
+    OpponentRaceData* opp = static_cast<OpponentRaceData*>(race_data->Opponents.Access(opp_id + 1));
 
-    OpponentRaceData* opp = static_cast<OpponentRaceData*>(race_data->Opponents.Access(index));
+    mmVehInfo* veh_info = VehList()->GetVehicleInfo(opp->Model);
+    i32 paint_job = opp_id % PARAM_maxoppcolors.get_or(string(veh_info->Colors).NumSubStrings());
 
     Car.Init(opp->Model, CAR_TYPE_OPPONENT, paint_job);
 
@@ -52,9 +63,7 @@ void aiVehicleOpponent::Init(i32 opp_id, aiRaceData* race_data, char* race_name)
 
     WayPts = arnew aiGoalFollowWayPts(
         opp->PathFile, &RailSet, this, &IsBackup, &IsFinished, &IsStopped, xconst(race_name), opp->MaxThrottle);
-
     BackupGoal = arnew aiGoalBackup(&RailSet, &Car, &IsBackup);
-
     StopGoal = arnew aiGoalStop(&Car, &IsStopped);
 
     IsSemi = !std::strcmp("vpsemi", opp->Model);
@@ -71,5 +80,36 @@ void aiVehicleOpponent::Init(i32 opp_id, aiRaceData* race_data, char* race_name)
         RailSet.BackBumperDist = max.z;
         RailSet.RSideDist = max.x;
     }
+
     AudIndexNumber = -1;
+}
+
+void aiVehicleOpponent::Update()
+{
+    if (AudIndexNumber == -1)
+        AddToAiAudMgr();
+
+    if (IsSemi || Car.Sim.ICS.Matrix.m3.Dist2(AIMAP.PlayerPos()) < (200.0f * 200.0f))
+        PHYS.DeclareMover(
+            &Car.Model, MOVER_TYPE_PERM, MOVER_FLAG_ACTIVE | MOVER_FLAG_COLLIDE_TERRAIN | MOVER_FLAG_COLLIDE_MOVERS);
+    else
+        PHYS.DeclareMover(&Car.Model, MOVER_TYPE_PERM,
+            (CullCity()->GetRoomFlags(Car.Model.ChainId) & INST_FLAG_100)
+                ? MOVER_FLAG_ACTIVE | MOVER_FLAG_COLLIDE_TERRAIN | MOVER_FLAG_COLLIDE_MOVERS
+                : MOVER_FLAG_ACTIVE | MOVER_FLAG_COLLIDE_TERRAIN | MOVER_FLAG_20);
+
+    if (Car.Model.HasTrailer())
+        PHYS.DeclareMover(&Car.Trailer->Inst, MOVER_TYPE_PERM, MOVER_FLAG_COLLIDE_TERRAIN | MOVER_FLAG_COLLIDE_MOVERS);
+
+    if (Car.Sim.HasCollided)
+        if (Car.Sim.SpeedMPH > PARAM_detachopptrailermph.get_or(50.0f) && !Car.TrailerJoint->IsBroken())
+            Car.ReleaseTrailer();
+
+    ALLOCATOR.CheckPointer(WayPts.get());
+    ALLOCATOR.CheckPointer(BackupGoal.get());
+    ALLOCATOR.CheckPointer(StopGoal.get());
+    aiVehicle::Update();
+    ALLOCATOR.CheckPointer(WayPts.get());
+    ALLOCATOR.CheckPointer(BackupGoal.get());
+    ALLOCATOR.CheckPointer(StopGoal.get());
 }

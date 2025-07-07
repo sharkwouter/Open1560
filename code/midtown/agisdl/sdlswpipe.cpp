@@ -39,6 +39,7 @@
 #include "eventq7/winevent.h"
 #include "pcwindis/dxinit.h"
 
+#include <SDL_hints.h>
 #include <SDL_render.h>
 #include <SDL_syswm.h>
 
@@ -304,6 +305,12 @@ i32 agiSDLSWPipeline::BeginGfx()
     sdl_renderer_ = SDL_CreateRenderer(
         window_, -1, SDL_RENDERER_ACCELERATED | ((device_flags_1_ & 0x1) ? SDL_RENDERER_PRESENTVSYNC : 0));
 
+    if (sdl_renderer_ == nullptr)
+    {
+        Errorf("Failed to create SDL renderer: %s", SDL_GetError());
+        return AGI_ERROR_NO_DEVICE;
+    }
+
     // FIXME: SDL_CreateRenderer can silently recreate the underlying window
     SDL_SysWMinfo wm_info {};
     SDL_VERSION(&wm_info.version);
@@ -341,11 +348,11 @@ i32 agiSDLSWPipeline::BeginGfx()
 
     swInit();
 
-    renderer_ = arref agiZBufRenderer(new agiSWRasterizer(this));
+    renderer_ = arnewr agiZBufRenderer(new agiSWRasterizer(this));
 
     if (bit_depth_ == 8)
     {
-        screen_color_model_ = arref agiColorModel8(&agiPal);
+        screen_color_model_ = arnewr agiColorModel8(&agiPal);
     }
     else
     {
@@ -354,7 +361,7 @@ i32 agiSDLSWPipeline::BeginGfx()
 
     text_color_model_ = screen_color_model_;
 
-    opaque_color_model_ = arref agiColorModel8(&agiPal);
+    opaque_color_model_ = arnewr agiColorModel8(&agiPal);
     alpha_color_model_ = opaque_color_model_;
 
     TexSearchPath = "texp\0"_xconst;
@@ -432,22 +439,22 @@ void agiSDLSWPipeline::CopyBitmap(i32 dst_x, i32 dst_y, agiBitmap* src, i32 src_
 
 RcOwner<agiBitmap> agiSDLSWPipeline::CreateBitmap()
 {
-    return as_owner arref agiSDLBitmap(this);
+    return as_owner arnewr agiSDLBitmap(this);
 }
 
 RcOwner<DLP> agiSDLSWPipeline::CreateDLP()
 {
-    return as_owner arref RDLP(this);
+    return as_owner arnewr RDLP(this);
 }
 
 RcOwner<agiLight> agiSDLSWPipeline::CreateLight()
 {
-    return as_owner arref agiBILight(this);
+    return as_owner arnewr agiBILight(this);
 }
 
 RcOwner<agiLightModel> agiSDLSWPipeline::CreateLightModel()
 {
-    return as_owner arref agiBILightModel(this);
+    return as_owner arnewr agiBILightModel(this);
 }
 
 RcOwner<agiMtlDef> agiSDLSWPipeline::CreateMtlDef()
@@ -458,18 +465,18 @@ RcOwner<agiMtlDef> agiSDLSWPipeline::CreateMtlDef()
 RcOwner<agiTexDef> agiSDLSWPipeline::CreateTexDef()
 {
     // FIXME: Reinterpreting pipeline
-    return as_owner arref agiSWTexDef(reinterpret_cast<agiSWPipeline*>(this));
+    return as_owner arnewr agiSWTexDef(reinterpret_cast<agiSWPipeline*>(this));
 }
 
 RcOwner<agiTexLut> agiSDLSWPipeline::CreateTexLut()
 {
     // FIXME: Reinterpreting pipeline
-    return as_owner arref agiSWTexLut(reinterpret_cast<agiSWPipeline*>(this));
+    return as_owner arnewr agiSWTexLut(reinterpret_cast<agiSWPipeline*>(this));
 }
 
 RcOwner<agiViewport> agiSDLSWPipeline::CreateViewport()
 {
-    return as_owner arref agiSDLViewport(this);
+    return as_owner arnewr agiSDLViewport(this);
 }
 
 void agiSDLSWPipeline::EndFrame()
@@ -509,6 +516,12 @@ void agiSDLSWPipeline::EndGfx()
     {
         SDL_DestroyRenderer(sdl_renderer_);
         sdl_renderer_ = nullptr;
+    }
+
+    // The "software" renderer/driver creates a window surface, but doesn't destroy it afterwards
+    if (SDL_HasWindowSurface(window_))
+    {
+        SDL_DestroyWindowSurface(window_);
     }
 
     gfx_started_ = false;

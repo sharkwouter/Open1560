@@ -20,6 +20,7 @@ define_dummy_symbol(arts7_sim);
 
 #include "sim.h"
 
+#include "agi/error.h"
 #include "agi/getdlp.h"
 #include "agi/light.h"
 #include "agi/mtllib.h"
@@ -57,12 +58,15 @@ i32 InitPipeline(char* title, i32 argc, char** argv)
     if (PipelineInitialized)
         Quitf("Tried to InitPipeline twice.");
 
-    PipelineInitialized = true;
-
     Argc = argc;
     Argv = argv;
 
     agiPipeline::CurrentPipe = as_raw CreatePipeline(argc, argv);
+
+    if (!agiPipeline::CurrentPipe)
+        return AGI_ERROR_NO_DEVICE;
+
+    PipelineInitialized = true;
 
     if (Pipe()->Validate())
         Quit("Couldn't start renderer");
@@ -95,7 +99,10 @@ void ShutdownPipeline()
     PipelineInitialized = false;
 
     if (SunLight)
+    {
         SunLight->Release();
+        SunLight = nullptr;
+    }
 
     agiPrintShutdown();
 
@@ -164,9 +171,9 @@ asSimulation::asSimulation()
 
         vector_capacity_ = 256;
         vector_count_ = 0;
-        vector_starts_ = MakeUnique<Vector3[]>(vector_capacity_);
-        vector_ends_ = MakeUnique<Vector3[]>(vector_capacity_);
-        vector_colors_ = MakeUnique<Vector3[]>(vector_capacity_);
+        vector_starts_ = arnewa Vector3[vector_capacity_] {};
+        vector_ends_ = arnewa Vector3[vector_capacity_] {};
+        vector_colors_ = arnewa Vector3[vector_capacity_] {};
     }
 #endif
 
