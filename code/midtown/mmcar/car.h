@@ -82,7 +82,7 @@ public:
     void ReleaseTrailer();
 
     // ?RemoveVehicleAudio@mmCar@@QAEXXZ
-    ARTS_EXPORT void RemoveVehicleAudio();
+    void RemoveVehicleAudio();
 
     // ?Reset@mmCar@@UAEXXZ
     void Reset() override;

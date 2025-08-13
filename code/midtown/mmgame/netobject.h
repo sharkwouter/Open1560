@@ -24,13 +24,24 @@
 
 class mmCar;
 
+#define NET_FLAG_HORN 0x2
+#define NET_FLAG_REVERSE 0x4
+#define NET_FLAG_SIREN 0x8
+
+enum NetgameMessageId
+{
+    PlayerUpdate = 501,
+    Chat = 504,
+    BootPlayer = 513,
+};
+
 struct NETGAME_MSG
 {
     i32 MessageId;
     i32 SenderId;
     f32 Steering;
-    char Throttle;
-    char Brakes;
+    u8 Throttle;
+    u8 Brakes;
     Vector3 Rotation;
     Vector3 Position;
     Vector3 Velocity;
@@ -38,7 +49,7 @@ struct NETGAME_MSG
     f32 Damage;
     u16 Score;
     u16 Flags;
-    i32 LastUpdateIdx;
+    u32 LastUpdateIdx;
     char StringValue[4];
 };
 
@@ -46,70 +57,67 @@ class mmNetObject final : public asNetObject
 {
 public:
     // ??0mmNetObject@@QAE@XZ
-    ARTS_IMPORT mmNetObject();
+    ARTS_EXPORT mmNetObject();
 
     // ??1mmNetObject@@UAE@XZ
     ARTS_EXPORT ~mmNetObject() override = default;
 
     // ?Activate@mmNetObject@@QAEXXZ
-    ARTS_IMPORT void Activate();
+    ARTS_EXPORT void Activate();
 
     // ?Clear@mmNetObject@@QAEXXZ
-    ARTS_IMPORT void Clear();
+    ARTS_EXPORT void Clear();
 
     // ?Deactivate@mmNetObject@@QAEXXZ
-    ARTS_IMPORT void Deactivate();
+    ARTS_EXPORT void Deactivate();
 
     // ?Init@mmNetObject@@QAEXPAVmmCar@@PADHK1@Z
     ARTS_EXPORT void Init(mmCar* car, char* vehicle, i32 variant, ulong player_id, char* name);
 
     // ?PositionUpdate@mmNetObject@@QAEXPAUNETGAME_MSG@@@Z
-    ARTS_IMPORT void PositionUpdate(NETGAME_MSG* arg1);
+    ARTS_EXPORT void PositionUpdate(NETGAME_MSG* msg);
 
     // ?Predict@mmNetObject@@QAEXXZ
-    ARTS_IMPORT void Predict();
+    void Predict();
 
     // ?ReInit@mmNetObject@@QAEXPAVmmCar@@PADHK1@Z
     ARTS_EXPORT void ReInit(mmCar* car, char* vehicle, i32 variant, ulong player_id, char* name);
 
     // ?SetActive@mmNetObject@@QAEXH@Z
-    ARTS_IMPORT void SetActive(i32 arg1);
+    ARTS_EXPORT void SetActive(i32 active);
 
     // ?SetCar@mmNetObject@@QAEXPAVmmCar@@@Z
-    ARTS_IMPORT void SetCar(mmCar* arg1);
+    ARTS_EXPORT void SetCar(mmCar* car);
 
     // ?SetLocalData@mmNetObject@@UAEXXZ
-    ARTS_IMPORT void SetLocalData() override;
+    void SetLocalData() override;
 
     // ?Update@mmNetObject@@UAEXXZ
-    ARTS_IMPORT void Update() override;
+    void Update() override;
 
-    u32 field_28;
-    u32 Flags;
-    i32 Score;
-    f32 Time;
-    NETGAME_MSG LocalData;
-    mmCar* Car;
-    b32 IsEnabled;
-    u32 Active;
-    u32 UpdateCount;
-    b32 MatrixChanged;
-    f32 ActivateTime;
-    f32 Steering;
-    f32 PrevSteering;
-    f32 SteeringDelta;
-    f32 Throttle;
-    f32 PrevThrottle;
-    f32 ThrottleDelta;
-    f32 Brakes;
-    f32 PrevBrakes;
-    f32 BrakesDelta;
-    f32 field_BC;
-    f32 field_C0;
-    Matrix34 Matrix;
+    u32 field_28 {};
+    u32 Flags {};
+    i32 Score {};
+    f32 Time {};
+    NETGAME_MSG LocalData {};
+    mmCar* Car {};
+    b32 IsEnabled {};
+    b32 Active {};
+    u32 UpdateCount {};
+    b32 MatrixChanged {};
+    f32 ActivateTime {};
+    f32 Steering {};
+    f32 PrevSteering {};
+    f32 SteeringDelta {};
+    f32 Throttle {};
+    f32 PrevThrottle {};
+    f32 ThrottleDelta {};
+    f32 Brakes {};
+    f32 PrevBrakes {};
+    f32 BrakesDelta {};
+    f32 field_BC {};
+    f32 field_C0 {};
+    Matrix34 Matrix {IDENTITY};
 };
 
 check_size(mmNetObject, 0xF4);
-
-// ?time_delta@@3MA
-ARTS_IMPORT extern f32 time_delta;
