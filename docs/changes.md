@@ -4,10 +4,10 @@ This is a list of notable changes made by Open1560. Many other smaller tweaks ar
 
 ## Added
 
-* FreeType font renderer
 * OpenGL hardware renderer
-* SDL2 software renderer
-* SDL2 window/input handler
+* SDL3 software renderer
+* SDL3 window/input handler
+* FreeType font renderer
 
 ## Fixed
 
