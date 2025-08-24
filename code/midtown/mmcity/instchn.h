@@ -39,7 +39,7 @@ public:
     ARTS_EXPORT void Parent(mmInstance* inst, i16 room);
 
     // ?Reparent@mmInstChain@@QAEXPAVmmInstance@@F@Z
-    ARTS_EXPORT void Reparent(mmInstance* inst, i16 room);
+    void Reparent(mmInstance* inst, i16 room);
 
     // ?Unparent@mmInstChain@@QAEXPAVmmInstance@@@Z
     ARTS_EXPORT void Unparent(mmInstance* inst);

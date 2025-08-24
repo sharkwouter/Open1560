@@ -92,10 +92,10 @@ public:
     ARTS_IMPORT void RelightEverything();
 
     // ?ReparentObject@mmCullCity@@QAEXPAVmmInstance@@@Z
-    ARTS_IMPORT void ReparentObject(mmInstance* inst);
+    ARTS_EXPORT void ReparentObject(mmInstance* inst);
 
     // ?Reset@mmCullCity@@UAEXXZ
-    ARTS_IMPORT void Reset() override;
+    ARTS_EXPORT void Reset() override;
 
     // ?ToggleSky@mmCullCity@@QAEXXZ
     ARTS_IMPORT void ToggleSky();

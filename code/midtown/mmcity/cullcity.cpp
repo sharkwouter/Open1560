@@ -22,7 +22,9 @@ define_dummy_symbol(mmcity_cullcity);
 
 #include "agi/dlptmpl.h"
 #include "agi/getdlp.h"
+#include "agi/pipeline.h"
 #include "agi/rsys.h"
+#include "agi/texdef.h"
 #include "agisw/swrend.h"
 #include "agiworld/getmesh.h"
 #include "agiworld/meshlight.h"
@@ -71,7 +73,7 @@ t_mmEnvSetup mmEnvSetup[4][4] {
         {"sky_ds", "refl_dr", "shadmap_nite",     0.000, 0.01, 200.0, 0xFFFFFF, 0.0, 0.0, 0.0},
     },
 };
-// clang-format off
+// clang-format on
 
 #ifdef ARTS_DEV_BUILD
 void mmRunwayLight::AddWidgets(Bank* /*arg1*/)
@@ -263,6 +265,57 @@ void mmCullCity::Init(char* name, asCamera* camera)
     {
         delete StaticLog;
     }
+}
+
+void mmCullCity::ReparentObject(mmInstance* inst)
+{
+    if (asPortalCell* cell = RenderWeb.GetStartCell(inst->GetPos(), 0, nullptr))
+    {
+        if (inst->ChainId == -1)
+        {
+            ObjectsChain.Parent(inst, cell->CellIndex);
+        }
+        else if (i16 cell_id = cell->CellIndex; cell_id != inst->ChainId)
+        {
+            ObjectsChain.Reparent(inst, cell_id);
+        }
+    }
+}
+
+void mmCullCity::Reset()
+{
+    asNode::Reset();
+
+    // Directly iterating over the instance heep? EEK!
+    for (mmInstance* inst = StartOfBangers; inst != EndOfBangers;
+        inst = reinterpret_cast<mmInstance*>(reinterpret_cast<char*>(inst) + inst->SizeOf()))
+    {
+        if (inst->TestFlags(INST_FLAG_40) && !inst->TestFlags(INST_FLAG_UNHIT_BANGER) &&
+            inst->SizeOf() == sizeof(mmUnhitBangerInstance))
+        {
+            inst->Reset();
+        }
+    }
+
+    if (IsSnowing)
+    {
+        for (i32 i = 0; i < SnowTextureCount; ++i)
+        {
+            if (agiTexDef* tex = SnowTexturesDst[i])
+            {
+                tex->EndGfx();
+                tex->SafeBeginGfx();
+            }
+        }
+
+        if (MMSTATE.TimeOfDay == mmTimeOfDay::Night)
+        {
+            for (i32 i = 0; i < 10000; ++i)
+                UpdateSnowTextures();
+        }
+    }
+
+    Pipe()->Defragment();
 }
 
 static mem::cmd_param PARAM_conelighter {"conelighter", "Use agiConeLighter"};

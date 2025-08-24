@@ -18,10 +18,5 @@
 
 #include "hooking.h"
 
-#include "data7/printer.h"
-
-#include <mem/module.h>
-#include <mem/protect.h>
-
 mem::static_function* INIT_main {};
 mem::static_function* FRAME_pre_update {};

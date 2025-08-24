@@ -37,4 +37,4 @@ void agiPrintShutdown();
 void agiPrintf(i32 x, i32 y, i32 color, ARTS_FORMAT_STRING const char* format, ...);
 
 // ?CharSet@@3PAEA
-extern const u8 CharSet[768];
+ARTS_EXPORT extern aconst u8 CharSet[768];
