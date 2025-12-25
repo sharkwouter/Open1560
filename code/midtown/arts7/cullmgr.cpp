@@ -35,7 +35,6 @@ define_dummy_symbol(arts7_cullmgr);
 #include "eventq7/active.h"
 #include "memory/allocator.h"
 #include "memory/stack.h"
-#include "midtown.h"
 #include "vector7/randmath.h"
 
 asCullManager* CULLMGR = nullptr;

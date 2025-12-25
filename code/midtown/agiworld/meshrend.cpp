@@ -79,10 +79,12 @@ alignas(64) i16 agiMeshSet::vertCounts[256];
 
 struct CV
 {
-    f32 x, y, z, w; // screen position
-    f32 map[3];     // source vertex interpolation
-    u8 fog;         // vertex fog
-    u8 idx[3];      // source vertex indices
+    f32 x {}, y {}, z {}, w {}; // screen position
+    f32 map[3] {};              // source vertex interpolation
+    u8 fog {};                  // vertex fog
+    u8 idx[3] {};               // source vertex indices
+
+    constexpr CV() = default;
 
     CV(const Vector4& pos, f32 map_0, f32 map_1, f32 map_2)
         : x(pos.x)
@@ -118,13 +120,13 @@ static u32 ClippedVertCount = 0;
 static u32 ClippedTriCount = 0;
 
 // ?ClippedVerts@@3PAUCV@@A
-ARTS_IMPORT extern CV ClippedVerts[2048];
+ARTS_EXPORT CV ClippedVerts[4096];
 
 // ?ClippedTris@@3PAUCT@@A
-ARTS_IMPORT extern CT ClippedTris[512];
+static CT ClippedTris[1024];
 
 // ?ClippedTextures@@3PAPAUCT@@A
-ARTS_IMPORT extern CT* ClippedTextures[256];
+ARTS_EXPORT CT* ClippedTextures[512];
 
 static bool OnlyZClip = false;
 
