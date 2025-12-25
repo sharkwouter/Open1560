@@ -33,6 +33,8 @@ struct MapSymbol
     usize Address {};
 };
 
+static usize MainBaseOfImage = 0;
+
 static bool MapSymbolsLoaded = false;
 static MapSymbol* MapSymbols = nullptr;
 static i32 MapSymbolCount = 0;
@@ -130,9 +132,7 @@ static void InitMap()
                 if (auto base = std::strstr(line_buffer, "Preferred load address is "))
                 {
                     if (arts_sscanf(base + 26, "%zx", &base_addr))
-                    {
-                        addr_delta = reinterpret_cast<usize>(GetModuleHandleA(NULL)) - base_addr;
-                    }
+                        addr_delta = MainBaseOfImage - base_addr;
                 }
 
                 continue;
@@ -185,6 +185,8 @@ static void InitDebugSymbols()
 {
     if (!MapSymbolsLoaded)
     {
+        MainBaseOfImage = reinterpret_cast<usize>(GetModuleHandle(NULL));
+
         InitMap();
 
         SymSetOptions(SYMOPT_UNDNAME | SYMOPT_DEFERRED_LOADS);
@@ -246,7 +248,7 @@ void LookupAddress(char* buffer, usize buflen, usize address)
             if (pSymbol->NameLen > 64)
                 arts_strcpy(pSymbol->Name + 61, 4, "...");
 
-            if (!arts_stricmp(module.ModuleName, "Open1560"))
+            if (module.BaseOfImage == MainBaseOfImage)
             {
                 arts_sprintf(
                     buffer, buflen, "0x%08zX (%s + 0x%X)", address, pSymbol->Name, static_cast<u32>(dwDisplacement));
