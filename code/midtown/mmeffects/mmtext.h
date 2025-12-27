@@ -81,7 +81,7 @@ struct mmTextData
 {
     u32 X {};
     u32 Y {};
-    u32 Effects {}; // MM_TEXT_*
+    i32 Effects {}; // MM_TEXT_*
     void* Font {};
     char Text[256] {};
 };
@@ -116,7 +116,7 @@ public:
     void RenderText(agiSurfaceDesc* surface, mmTextData* lines, i32 num_lines, u32 enabled_lines);
 
     // ?SetEffects@mmTextNode@@QAEXHH@Z
-    ARTS_IMPORT void SetEffects(i32 line, i32 effects);
+    ARTS_EXPORT void SetEffects(i32 line, i32 effects);
 
     // ?SetFGColor@mmTextNode@@QAEXAAVVector4@@@Z
     ARTS_IMPORT void SetFGColor(Vector4& arg1);

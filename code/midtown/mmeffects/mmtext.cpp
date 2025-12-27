@@ -96,6 +96,20 @@ void mmTextNode::SetString(i32 line, LocString* text)
     }
 }
 
+void mmTextNode::SetEffects(i32 line, i32 effects)
+{
+    ArAssert(line < max_lines_, "Invalid line index");
+
+    mmTextData& line_data = lines_[line];
+
+    if (effects != line_data.Effects)
+    {
+        line_data.Effects = effects;
+
+        touched_ = true;
+    }
+}
+
 mmLocFontInfo::mmLocFontInfo(LocString* params)
 {
     Context = arts_strdup(params->Text);
