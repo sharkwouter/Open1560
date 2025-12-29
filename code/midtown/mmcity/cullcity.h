@@ -151,10 +151,10 @@ public:
     i8* SnowTextureHeightRatios;
     f32 WeatherFriction;
     f32 RainFriction;
-    f32 SnowFrictionStart;
+    f32 SnowFrictionMax;
     f32 SnowFrictionMin;
-    f32 SnowFrictionTime;
-    f32 SnowTotalElapsed;
+    f32 SnowFrictionBlendSpeed;
+    f32 SnowFrictionStartTime;
     agiTexDef* ShadowMap;
     agiTexDef* SphereMap;
     Matrix34 EnvMatrix;

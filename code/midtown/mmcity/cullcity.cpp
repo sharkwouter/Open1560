@@ -32,6 +32,7 @@ define_dummy_symbol(mmcity_cullcity);
 #include "agiworld/quality.h"
 #include "agiworld/texsheet.h"
 #include "arts7/cullmgr.h"
+#include "arts7/sim.h"
 #include "data7/memstat.h"
 #include "localize/localize.h"
 #include "mmcityinfo/state.h"
@@ -288,7 +289,7 @@ void mmCullCity::Reset()
 
     // Directly iterating over the instance heep? EEK!
     for (mmInstance* inst = StartOfBangers; inst != EndOfBangers;
-         inst = reinterpret_cast<mmInstance*>(reinterpret_cast<char*>(inst) + inst->SizeOf()))
+        inst = reinterpret_cast<mmInstance*>(reinterpret_cast<char*>(inst) + inst->SizeOf()))
     {
         if (inst->TestFlags(INST_FLAG_40) && !inst->TestFlags(INST_FLAG_UNHIT_BANGER) &&
             inst->SizeOf() == sizeof(mmUnhitBangerInstance))
@@ -313,6 +314,8 @@ void mmCullCity::Reset()
             for (i32 i = 0; i < 10000; ++i)
                 UpdateSnowTextures();
         }
+
+        SnowFrictionStartTime = Sim()->GetElapsed();
     }
 
     Pipe()->Defragment();
