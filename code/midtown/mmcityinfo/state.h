@@ -164,6 +164,7 @@ struct mmStatePack
 
     char IntroText[160];
 
+    // See mmViewCFG
     // Camera
     i8 CameraIndex;
     i8 HudmapMode;

@@ -20,6 +20,87 @@
 
 #include "infobase.h"
 
+#include "mminput/iodev.h"
+
+struct mmAudioCFG
+{
+    f32 WavVol;
+    f32 CDVol;
+    f32 Bal;
+    u32 Flags;
+    u32 Channels;
+    char DeviceName[200];
+};
+
+check_size(mmAudioCFG, 0xDC);
+
+struct mmViewCFG
+{
+    i8 CameraIndex;
+    i8 HudmapMode;
+    i8 WideView;
+    i8 DashView;
+    i8 EnableMirror;
+    i8 ExternalView;
+    i8 XcamView;
+    i8 IconsState;
+    i8 MapRes;
+    i8 byte9;
+};
+
+check_size(mmViewCFG, 0xA);
+
+struct mmGfxCFG
+{
+public:
+    // ?Get@mmGfxCFG@@QAEXXZ
+    ARTS_IMPORT void Get();
+
+    // ?Set@mmGfxCFG@@QAEXXZ
+    ARTS_IMPORT void Set();
+
+    u32 Tex;
+    u32 Obj;
+    u32 Shadows;
+    u32 EnvMap;
+    u32 SphrMap;
+    u32 Sky;
+    f32 FarClip;
+    f32 LightQuality;
+    f32 Particles;
+    u32 DisablePeds;
+    u32 Interlaced;
+    u32 SpeedLoading;
+    u32 TexFilter;
+};
+
+check_size(mmGfxCFG, 0x34);
+
+struct mmCtrlCFG
+{
+public:
+    // ??1mmCtrlCFG@@QAE@XZ | inline
+    ARTS_IMPORT ~mmCtrlCFG();
+
+    i32 InputType;
+    u32 Transmission;
+    u32 AutoReverseEnabled;
+    u32 UsePOVHat;
+    u32 UseForceFeedback;
+    f32 ForceFeedbackScale;
+    f32 RoadForceScale;
+    f32 PhysicsRealism;
+    f32 MouseSensitivity;
+    f32 JoyDeadZone;
+    f32 DiscreteSteeringDelta;
+    f32 DiscreteSteeringLimit;
+    f32 UserSteeringSensitivity;
+    u32 field_1D4;
+    mmIODev IODev[165];
+};
+
+check_size(mmCtrlCFG, 0x6C80);
+
 class mmPlayerConfig final : public mmInfoBase
 {
 public:
@@ -36,7 +117,7 @@ public:
     ARTS_IMPORT void DefaultControls();
 
     // ?DefaultViewSettings@mmPlayerConfig@@QAEXXZ
-    ARTS_IMPORT void DefaultViewSettings();
+    ARTS_EXPORT void DefaultViewSettings();
 
     // ?GetAudio@mmPlayerConfig@@QAEXXZ
     ARTS_IMPORT void GetAudio();
@@ -83,32 +164,12 @@ public:
     // ?DeclareFields@mmPlayerConfig@@SAXXZ
     ARTS_IMPORT static void DeclareFields();
 
-    alignas(8) u8 gap88[0x6DA8];
+    i32 MyVersion;
+    mmGfxCFG Graphics;
+    mmAudioCFG Audio;
+    u32 field_19C;
+    mmCtrlCFG Controls;
+    mmViewCFG ViewSettings;
 };
 
 check_size(mmPlayerConfig, 0x6E30);
-
-struct mmGfxCFG
-{
-public:
-    // ?Get@mmGfxCFG@@QAEXXZ
-    ARTS_IMPORT void Get();
-
-    // ?Set@mmGfxCFG@@QAEXXZ
-    ARTS_IMPORT void Set();
-
-    u8 gap0[0x34];
-};
-
-check_size(mmGfxCFG, 0x34);
-
-struct mmCtrlCFG
-{
-public:
-    // ??1mmCtrlCFG@@QAE@XZ | inline
-    ARTS_IMPORT ~mmCtrlCFG();
-
-    u8 gap0[0x6C80];
-};
-
-check_size(mmCtrlCFG, 0x6C80);

@@ -19,3 +19,15 @@
 define_dummy_symbol(mmcityinfo_playercfg);
 
 #include "playercfg.h"
+
+void mmPlayerConfig::DefaultViewSettings()
+{
+    ViewSettings.IconsState = 1;
+    ViewSettings.CameraIndex = 2; // Far Camera
+    ViewSettings.HudmapMode = 0;
+    ViewSettings.WideView = 0;
+    ViewSettings.DashView = 0;
+    ViewSettings.EnableMirror = 1;
+    ViewSettings.ExternalView = 1; // Speedometer
+    ViewSettings.MapRes = 0;
+}
