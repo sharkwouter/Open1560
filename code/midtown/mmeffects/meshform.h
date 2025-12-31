@@ -36,7 +36,7 @@ public:
     ARTS_IMPORT void Cull() override;
 
     // ?SetShape@asMeshSetForm@@QAEXPAD0PAVVector3@@@Z
-    ARTS_IMPORT void SetShape(char* arg1, char* arg2, Vector3* arg3);
+    ARTS_IMPORT void SetShape(aconst char* arg1, aconst char* arg2, Vector3* arg3);
 
     // ?SetZRead@asMeshSetForm@@QAEXH@Z
     ARTS_IMPORT void SetZRead(i32 arg1);
@@ -53,7 +53,9 @@ public:
     // ?SphMapTex@asMeshSetForm@@2PAVagiTexDef@@A
     ARTS_IMPORT static agiTexDef* SphMapTex;
 
-    u8 gap20[0xC];
+    i32 Mesh;
+    i32 Color;
+    i32 Flags;
 };
 
 check_size(asMeshSetForm, 0x2C);

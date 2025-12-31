@@ -23,6 +23,7 @@ define_dummy_symbol(mmgame_hud);
 #include "arts7/sim.h"
 #include "mmcity/cullcity.h"
 #include "mmcityinfo/state.h"
+#include "mmeffects/meshform.h"
 
 #include "gameman.h"
 
@@ -110,3 +111,50 @@ void mmHUD::TogglePositionDisplay(i32 mode)
 
 void mmHUD::UpdatePaused()
 {}
+
+mmArrow::mmArrow()
+{
+    LinearCS = arnew asLinearCS();
+
+    GreenArrow = arnew asMeshSetForm();
+    GreenArrow->SetShape("hudarrow1"_xconst, "BOTTOM"_xconst, nullptr);
+    asMeshSetForm::Lighter = nullptr;
+    asMeshSetForm::SphMapTex = nullptr;
+    GreenArrow->SetZRead(false);
+    GreenArrow->SetZWrite(false);
+    GreenArrow->Color = 0x8000FF00;
+
+    YellowArrow = arnew asMeshSetForm();
+    YellowArrow->SetShape("hudarrow2"_xconst, "BOTTOM"_xconst, nullptr);
+    asMeshSetForm::Lighter = nullptr;
+    asMeshSetForm::SphMapTex = nullptr;
+    YellowArrow->SetZRead(false);
+    YellowArrow->SetZWrite(false);
+    YellowArrow->Color = 0x80FFFF00;
+
+    LinearCS->Matrix.m3 = {0.0f, 2.0f, -6.1f};
+    Interest = 0;
+    Transform = 0;
+
+    LinearCS->AddChild(GreenArrow.get());
+    LinearCS->AddChild(YellowArrow.get());
+    AddChild(LinearCS.get());
+
+    Color = 2;
+}
+
+void mmArrow::Init(Matrix34* transform)
+{
+    Transform = transform;
+}
+
+void mmArrow::Reset()
+{
+    Interest = nullptr;
+    asNode::Reset();
+}
+
+void mmArrow::SetInterest(Vector3* interest)
+{
+    Interest = interest;
+}
