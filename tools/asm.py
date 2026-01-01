@@ -236,7 +236,8 @@ output = replace_all(output, '\n\n\n', '\n\n')
 with open(game_asm, 'w') as f:
     f.write(output)
 
-print('Component  | Proc | Data | Total')
+print('| Component  | Proc | Data | Total |')
+print('|------------|------|------|-------|')
 
 for folder, imps in sorted(dir_imports.items()):
     total_imps = len(imps)
@@ -244,9 +245,9 @@ for folder, imps in sorted(dir_imports.items()):
         continue
     num_procs = sum(1 for sym in imps if sym in proc_syms) 
     num_data = total_imps - num_procs
-    print(f'{folder:10} | {num_procs:>4} | {num_data:>4} | {total_imps:>5}')
+    print(f'| {folder:10} | {num_procs:>4} | {num_data:>4} | {total_imps:>5} |')
 
-print(f'Total imported symbols: {len(import_syms)}')
+print(f'\nTotal imported symbols: {len(import_syms)}')
 
 unused_exports = export_syms - visited
 
