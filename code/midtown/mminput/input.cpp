@@ -298,7 +298,7 @@ void mmInput::SetDefaultConfig(i32 config)
             break;
         case mmiJOYSTICK:
             IO[IOID_MAP].InitDev(kEvent, 0, MM_KEYBOARD, 0xf);
-            IO[IOID_FMAP].InitDev(kEvent, 0, MM_JOYSTICK1, kJButton5);
+            IO[IOID_FMAP].InitDev(kEvent, 0, MM_JOYSTICK1, kJButton7);
             IO[IOID_MAPRES].InitDev(kEvent, 0, MM_KEYBOARD, 0x12);
             IO[IOID_HUD].InitDev(kEvent, 0, MM_KEYBOARD, 0x23);
             IO[IOID_STR].InitDev(kContinuous, 0, MM_JOYSTICK1, kXaxis);
@@ -309,18 +309,18 @@ void mmInput::SetDefaultConfig(i32 config)
             IO[IOID_HAND].InitDev(kDiscrete, 0, MM_JOYSTICK1, kJButton3);
             IO[IOID_CAM].InitDev(kEvent, 0, MM_JOYSTICK1, kJButton2);
             IO[IOID_XVIEW].InitDev(kEvent, 0, MM_KEYBOARD, 0x2f);
-            IO[IOID_HORN].InitDev(kDiscrete, 0, MM_JOYSTICK1, kJButton9);
+            IO[IOID_HORN].InitDev(kDiscrete, 0, MM_JOYSTICK1, kJButton1);
             IO[IOID_LOKL].InitDev(kDiscrete, 0, MM_KEYBOARD, 0x4b);
             IO[IOID_LOKR].InitDev(kDiscrete, 0, MM_KEYBOARD, 0x4d);
             IO[IOID_LOKB].InitDev(kDiscrete, 0, MM_KEYBOARD, 0x50);
             IO[IOID_LOKF].InitDev(kDiscrete, 0, MM_KEYBOARD, 0x48);
             IO[IOID_WFOV].InitDev(kEvent, 0, MM_KEYBOARD, 0x11);
             IO[IOID_DASH].InitDev(kEvent, 0, MM_JOYSTICK1, kJButton4);
-            IO[IOID_TRANS].InitDev(kEvent, 0, MM_KEYBOARD, 0x14);
-            IO[IOID_UPSH].InitDev(kEvent, 0, MM_KEYBOARD, 0x1e);
-            IO[IOID_DWNS].InitDev(kEvent, 0, MM_KEYBOARD, 0x2c);
-            IO[IOID_REV].InitDev(kEvent, 0, MM_KEYBOARD, 0x13);
-            IO[IOID_WYPTN].InitDev(kEvent, 0, MM_KEYBOARD, 0x1f);
+            IO[IOID_TRANS].InitDev(kEvent, 0, MM_JOYSTICK1, kJButton9);
+            IO[IOID_UPSH].InitDev(kEvent, 0, MM_JOYSTICK1, kJButton5);
+            IO[IOID_DWNS].InitDev(kEvent, 0, MM_JOYSTICK1, kJButton6);
+            IO[IOID_REV].InitDev(kEvent, 0, MM_JOYSTICK1, kJButton10);
+            IO[IOID_WYPTN].InitDev(kEvent, 0, MM_JOYSTICK1, kJButton8);
             IO[IOID_WYPTP].InitDev(kEvent, 0, MM_KEYBOARD, 0x2d);
             IO[IOID_CDSHOW].InitDev(kEvent, 0, MM_KEYBOARD, 0x3);
             IO[IOID_CDPLAY].InitDev(kEvent, 0, MM_KEYBOARD, 0x4);
