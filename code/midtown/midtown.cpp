@@ -72,6 +72,7 @@ define_dummy_symbol(midtown);
 #include <SDL3/SDL_log.h>
 #include <SDL3/SDL_main.h>
 #include <SDL3/SDL_system.h>
+#include <SDL3/SDL_version.h>
 
 #include "core/minwin.h"
 
@@ -1112,7 +1113,13 @@ int main(int argc, char** argv)
     LogToFile("Open1560.log");
 
     Displayf("Build: %s", VERSION_STRING);
-    Displayf("Download updates at https://0x1f9f1.github.io/Open1560");
+    Displayf("Download updates from https://0x1f9f1.github.io/Open1560");
+
+    {
+        int version = SDL_GetVersion();
+        Displayf("Using SDL %i.%i.%i  / %s", SDL_VERSIONNUM_MAJOR(version), SDL_VERSIONNUM_MINOR(version),
+            SDL_VERSIONNUM_MICRO(version), SDL_GetRevision());
+    }
 
     GameStaticInit();
 
