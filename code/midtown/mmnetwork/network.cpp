@@ -33,7 +33,7 @@ HRESULT WINAPI netDirectPlayCreate(LPGUID lpGUID, LPDIRECTPLAY* lplpDP, IUnknown
 
 static bool LoadDirectPlay()
 {
-    if (!PARAM_dplay.get_or(true))
+    if (!PARAM_dplay.get_or(false))
     {
         Displayf("DirectPlay disabled. Use `-dplay` cmd argument to enable multiplayer");
         return false;
