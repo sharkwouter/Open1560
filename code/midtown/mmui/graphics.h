@@ -72,12 +72,14 @@ public:
     ARTS_IMPORT void SetLightQuality();
 
     // ?SetRenderer@GraphicsOptions@@QAEXXZ
-    ARTS_IMPORT void SetRenderer();
+    ARTS_EXPORT void SetRenderer();
 
     // ?SetResolution@GraphicsOptions@@QAEXXZ
     ARTS_IMPORT void SetResolution();
 
-    u8 gap6EC8[0x20];
+private:
+    Callback OnRendererChanged {};
+    string ResOptions {};
 };
 
 check_size(GraphicsOptions, 0x6EE8);

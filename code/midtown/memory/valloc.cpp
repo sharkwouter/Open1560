@@ -26,9 +26,6 @@ define_dummy_symbol(memory_valloc);
 
 asSafeHeap SAFEHEAP {};
 
-asSafeHeap::asSafeHeap()
-{}
-
 asSafeHeap::~asSafeHeap()
 {
     Kill();

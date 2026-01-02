@@ -18,6 +18,7 @@
 
 #pragma once
 
+#include "mmcityinfo/playercfg.h"
 #include "mmwidget/menu.h"
 
 class OptionsBase : public UIMenu
@@ -42,7 +43,8 @@ public:
     // ?IsAnOptionMenu@OptionsBase@@UAEHXZ | inline
     ARTS_IMPORT i32 IsAnOptionMenu() override;
 
-    u8 gap90[0x6E38];
+    u8 field_90[8];
+    mmPlayerConfig Config;
 };
 
 check_size(OptionsBase, 0x6EC8);

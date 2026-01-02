@@ -22,7 +22,7 @@ class asSafeHeap
 {
 public:
     // ??0asSafeHeap@@QAE@XZ
-    asSafeHeap();
+    asSafeHeap() = default;
 
     // ??1asSafeHeap@@QAE@XZ
     ~asSafeHeap();

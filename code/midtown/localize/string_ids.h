@@ -388,12 +388,12 @@
 #define MM_IDS_368 368
 #define MM_IDS_369 369
 #define MM_IDS_370 370
-#define MM_IDS_371 371
+#define MM_IDS_RECOMMENDED 371
 #define MM_IDS_372 372
 #define MM_IDS_373 373
 #define MM_IDS_374 374
 #define MM_IDS_375 375
-#define MM_IDS_376 376
+#define MM_IDS_FMT_RES_RECOMMENDED 376
 #define MM_IDS_377 377
 #define MM_IDS_378 378
 #define MM_IDS_379 379

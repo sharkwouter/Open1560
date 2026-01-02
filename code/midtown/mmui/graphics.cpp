@@ -22,16 +22,27 @@ define_dummy_symbol(mmui_graphics);
 
 #include "agiworld/quality.h"
 #include "mmcityinfo/state.h"
+#include "mmwidget/textdrop.h"
+#include "pcwindis/dxsetup.h"
 #include "pcwindis/setupdata.h"
 
 // ?SetTexQualString@@YAXXZ
 ARTS_IMPORT /*static*/ void SetTexQualString();
 
 // ?MaxTextureQuality@@3HA
-ARTS_IMPORT extern i32 MaxTextureQuality;
+ARTS_EXPORT i32 MaxTextureQuality;
 
 // ?LightQualityOption@@3MA
-ARTS_IMPORT extern f32 LightQualityOption;
+ARTS_EXPORT f32 LightQualityOption;
+
+// ?ResolutionOption@@3HA
+ARTS_EXPORT i32 ResolutionOption;
+
+// ?RendererOption@@3HA
+ARTS_EXPORT i32 RendererOption;
+
+// ?ResolutionDropdown@@3PAVUITextDropdown@@A
+ARTS_EXPORT UITextDropdown* ResolutionDropdown;
 
 void AutoDetect(i32 renderer, i32 resolution)
 {
@@ -92,4 +103,32 @@ void AutoDetect(i32 renderer, i32 resolution)
     MMSTATE.DisablePeds = false;
 
     agiRQ.TexFilter = true; // Trilinear
+}
+
+void GraphicsOptions::SetRenderer()
+{
+    i32 recommended = dxiResGetRecommended(RendererOption, dxiCpuSpeed);
+    dxiRendererInfo_t& info = dxiInfo[RendererOption];
+    ResOptions = "";
+
+    for (i32 i = 0; i < info.ResCount; ++i)
+    {
+        if (i)
+            ResOptions += "|";
+
+        const dxiResolution& res = info.Resolutions[i];
+
+        char buffer[32];
+        arts_sprintf(buffer, "%d x %d", res.uWidth, res.uHeight);
+        ResOptions += buffer;
+
+        if (i == recommended)
+            ResOptions += LOC_STR(MM_IDS_RECOMMENDED);
+    }
+
+    ResolutionOption = info.ResChoice;
+    ResolutionDropdown->AssignString(ResOptions);
+    ResolutionDropdown->SetValue(ResolutionOption);
+    AutoDetect(RendererOption, ResolutionOption);
+    SetTexQualString();
 }
