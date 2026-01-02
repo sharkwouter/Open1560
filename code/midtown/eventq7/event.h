@@ -113,7 +113,7 @@ protected:
 check_size(eqEventHandler, 0x164);
 
 #define EQ_SEND(NAME, ...)                               \
-    for (eqEventMonitor * monitor : monitors_)           \
+    for (eqEventMonitor* monitor : monitors_)            \
     {                                                    \
         if (monitor && (monitor->channels_ & channels_)) \
             monitor->NAME(__VA_ARGS__);                  \

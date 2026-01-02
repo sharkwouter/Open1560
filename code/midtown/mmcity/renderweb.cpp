@@ -150,7 +150,7 @@ void asRenderWeb::LoadCells(const char* city_name, bool enable_lm)
     stream->Gets(buffer, ARTS_SIZE(buffer));
     MaxCells = std::atoi(buffer) + 1;
 
-    CellArray = arnewa asPortalCell * [MaxCells] {};
+    CellArray = arnewa asPortalCell* [MaxCells] {};
 
     for (i32 i = 0; i < num_cells; ++i)
     {
@@ -420,7 +420,7 @@ void asRenderWeb::SavePortals()
     for (asPortalEdge* edge = Edges; edge; edge = edge->Next)
         ++num_edges;
 
-    Ptr<asPortalEdge*[]> edges = arnewa asPortalEdge * [num_edges] {};
+    Ptr<asPortalEdge*[]> edges = arnewa asPortalEdge* [num_edges] {};
 
     {
         i32 index = num_edges;

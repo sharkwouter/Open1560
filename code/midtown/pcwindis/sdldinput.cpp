@@ -378,7 +378,7 @@ public:
 
             if (num_gamepads > 0)
             {
-                Ptr<SDL_Gamepad*[]> gamepads = arnewa SDL_Gamepad * [num_gamepads + 1] {};
+                Ptr<SDL_Gamepad*[]> gamepads = arnewa SDL_Gamepad* [num_gamepads + 1] {};
                 usize num_opened = 0;
 
                 for (int i = 0; i < num_gamepads; ++i)

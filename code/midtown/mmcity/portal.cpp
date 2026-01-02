@@ -106,8 +106,7 @@ static inline i32 ClipNX(Vector4* output, const Vector4* input, i32 count)
         return v0;
     };
 
-    return Clipper(
-        output, input, count, [](const Vector4& vert) { return -vert.x > vert.w; }, clip);
+    return Clipper(output, input, count, [](const Vector4& vert) { return -vert.x > vert.w; }, clip);
 }
 
 static inline i32 ClipPX(Vector4* output, const Vector4* input, i32 count)
@@ -120,8 +119,7 @@ static inline i32 ClipPX(Vector4* output, const Vector4* input, i32 count)
         return v0;
     };
 
-    return Clipper(
-        output, input, count, [](const Vector4& vert) { return vert.x > vert.w; }, clip);
+    return Clipper(output, input, count, [](const Vector4& vert) { return vert.x > vert.w; }, clip);
 }
 
 static inline i32 ClipNY(Vector4* output, const Vector4* input, i32 count)
@@ -134,8 +132,7 @@ static inline i32 ClipNY(Vector4* output, const Vector4* input, i32 count)
         return v0;
     };
 
-    return Clipper(
-        output, input, count, [](const Vector4& vert) { return -vert.y > vert.w; }, clip);
+    return Clipper(output, input, count, [](const Vector4& vert) { return -vert.y > vert.w; }, clip);
 }
 
 static inline i32 ClipPY(Vector4* output, const Vector4* input, i32 count)
@@ -148,8 +145,7 @@ static inline i32 ClipPY(Vector4* output, const Vector4* input, i32 count)
         return v0;
     };
 
-    return Clipper(
-        output, input, count, [](const Vector4& vert) { return vert.y > vert.w; }, clip);
+    return Clipper(output, input, count, [](const Vector4& vert) { return vert.y > vert.w; }, clip);
 }
 
 static i32 XYClip(Vector4* verts, i32 count, i32 clip_any)

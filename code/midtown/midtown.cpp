@@ -62,7 +62,7 @@ define_dummy_symbol(midtown);
 #include "vector7/randmath.h"
 
 #ifdef ARTS_DEV_BUILD
-#include "toolmgr/toolmgr.h"
+#    include "toolmgr/toolmgr.h"
 #endif
 
 #include <mem/cmd_param-inl.h>
@@ -79,7 +79,7 @@ define_dummy_symbol(midtown);
 #include <shellapi.h>
 
 #ifndef CI_BUILD_STRING
-#define CI_BUILD_STRING "Dev"
+#    define CI_BUILD_STRING "Dev"
 #endif
 
 const char* VERSION_STRING = "Open1560: " __DATE__ " " __TIME__ " / " CI_BUILD_STRING;
@@ -1021,10 +1021,10 @@ static void ShowUsage()
     {
         mem::cmd_param& cmd = *cmds[i];
 
-        name_width = (std::max)(name_width, std::strlen(cmd.name()));
+        name_width = (std::max) (name_width, std::strlen(cmd.name()));
 
         if (const char* desc = cmd.description())
-            desc_width = (std::max)(desc_width, std::strlen(desc));
+            desc_width = (std::max) (desc_width, std::strlen(desc));
     }
 
     for (std::size_t i = 0; i < count; ++i)

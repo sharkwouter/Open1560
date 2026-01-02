@@ -117,7 +117,7 @@ void UIMenu::AddWidget(uiWidget* widget, aconst char* label, f32 x, f32 y, f32 w
     widget->Menu = this;
     widget->WidgetID = (id != -1) ? id : widget_count_;
 
-    Ptr<uiWidget*[]> widgets = arnewa uiWidget * [widget_count_ + 1] {};
+    Ptr<uiWidget*[]> widgets = arnewa uiWidget* [widget_count_ + 1] {};
     for (i32 i = 0; i < widget_count_; ++i)
         widgets[i] = widgets_[i];
     widgets[widget_count_] = widget;

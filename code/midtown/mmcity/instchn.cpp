@@ -30,7 +30,7 @@ i32 WorstRoom = 0;
 
 void mmInstChain::Init(i32 num_rooms)
 {
-    Chains = arnewa mmInstance * [num_rooms] {};
+    Chains = arnewa mmInstance* [num_rooms] {};
     ChainCounts = arnewa i16[num_rooms] {};
     NumChains = num_rooms;
 }

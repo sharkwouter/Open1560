@@ -85,7 +85,7 @@ class mmIODev;
 // ?IODev@@3PAVmmIODev@@A
 ARTS_IMPORT extern mmIODev* IODev;
 
-namespace $
+namespace _io
 {
     enum ioType : i32 // 'k' prefix
     {
@@ -174,11 +174,11 @@ namespace $
         JButton31 = 59,
         JButton32 = 60,
     };
-} // namespace $
+} // namespace _io
 
-using $::ioType;
-using $::mmIODevice;
-using $::mmJoyInput;
+using _io::ioType;
+using _io::mmIODevice;
+using _io::mmJoyInput;
 
 // ?InputConfiguration@@3HA
 ARTS_IMPORT extern i32 InputConfiguration;

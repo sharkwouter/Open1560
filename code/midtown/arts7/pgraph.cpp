@@ -192,7 +192,7 @@ void asPerfGraph::Cull()
     {
         for (i32 height = 0, step = std::clamp<i32>(static_cast<i32>(std::round(max_height * 0.05f)), 1, 5),
                  prev = pipe_height;
-             height <= max_height;)
+            height <= max_height;)
         {
             height += step;
 

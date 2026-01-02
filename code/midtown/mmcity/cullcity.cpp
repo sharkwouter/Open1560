@@ -289,7 +289,7 @@ void mmCullCity::Reset()
 
     // Directly iterating over the instance heep? EEK!
     for (mmInstance* inst = StartOfBangers; inst != EndOfBangers;
-         inst = reinterpret_cast<mmInstance*>(reinterpret_cast<char*>(inst) + inst->SizeOf()))
+        inst = reinterpret_cast<mmInstance*>(reinterpret_cast<char*>(inst) + inst->SizeOf()))
     {
         if (inst->TestFlags(INST_FLAG_40) && !inst->TestFlags(INST_FLAG_UNHIT_BANGER) &&
             inst->SizeOf() == sizeof(mmUnhitBangerInstance))
