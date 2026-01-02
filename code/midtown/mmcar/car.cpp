@@ -131,7 +131,7 @@ void mmCar::PostUpdate()
     CullCity()->ReparentObject(&Model);
 }
 
-void mmCar::ReInit(char* name, i32 variant)
+void mmCar::ReInit(aconst char* name, i32 variant)
 {
     mmVehInfo* veh_info = VehList()->GetVehicleInfo(name);
 

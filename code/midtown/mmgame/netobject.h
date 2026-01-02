@@ -72,7 +72,7 @@ public:
     ARTS_EXPORT void Deactivate();
 
     // ?Init@mmNetObject@@QAEXPAVmmCar@@PADHK1@Z
-    ARTS_EXPORT void Init(mmCar* car, char* vehicle, i32 variant, ulong player_id, char* name);
+    ARTS_EXPORT void Init(mmCar* car, aconst char* vehicle, i32 variant, ulong player_id, aconst char* name);
 
     // ?PositionUpdate@mmNetObject@@QAEXPAUNETGAME_MSG@@@Z
     ARTS_EXPORT void PositionUpdate(NETGAME_MSG* msg);
@@ -81,10 +81,10 @@ public:
     void Predict();
 
     // ?ReInit@mmNetObject@@QAEXPAVmmCar@@PADHK1@Z
-    ARTS_EXPORT void ReInit(mmCar* car, char* vehicle, i32 variant, ulong player_id, char* name);
+    ARTS_EXPORT void ReInit(mmCar* car, aconst char* vehicle, i32 variant, ulong player_id, aconst char* name);
 
     // ?SetActive@mmNetObject@@QAEXH@Z
-    ARTS_EXPORT void SetActive(i32 active);
+    ARTS_EXPORT void SetActive(b32 active);
 
     // ?SetCar@mmNetObject@@QAEXPAVmmCar@@@Z
     ARTS_EXPORT void SetCar(mmCar* car);

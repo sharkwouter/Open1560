@@ -87,7 +87,7 @@ void mmNetObject::Deactivate()
     DeactivateNode();
 }
 
-void mmNetObject::Init(mmCar* car, char* vehicle, i32 variant, ulong player_id, char* name)
+void mmNetObject::Init(mmCar* car, aconst char* vehicle, i32 variant, ulong player_id, aconst char* name)
 {
     vehicle = VehList()->GetVehicleInfo(vehicle)->BaseName;
 
@@ -239,7 +239,7 @@ void mmNetObject::Predict()
     }
 }
 
-void mmNetObject::ReInit(mmCar* car, char* vehicle, i32 variant, ulong player_id, char* name)
+void mmNetObject::ReInit(mmCar* car, aconst char* vehicle, i32 variant, ulong player_id, aconst char* name)
 {
     vehicle = VehList()->GetVehicleInfo(vehicle)->BaseName;
 

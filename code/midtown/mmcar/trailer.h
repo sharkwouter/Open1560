@@ -109,7 +109,7 @@ public:
     ARTS_IMPORT asInertialCS* GetICS() override;
 
     // ?Init@mmTrailer@@QAEXPADPAVmmCarSim@@VVector3@@@Z
-    ARTS_IMPORT void Init(char* arg1, mmCarSim* arg2, Vector3 arg3);
+    ARTS_IMPORT void Init(aconst char* arg1, mmCarSim* arg2, Vector3 arg3);
 
     // ?PostUpdate@mmTrailer@@UAEXXZ
     ARTS_IMPORT void PostUpdate() override;

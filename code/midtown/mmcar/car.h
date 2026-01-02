@@ -67,7 +67,7 @@ public:
     ARTS_IMPORT void Impact(mmIntersection* arg1, Vector3* arg2, f32 arg3, i32 arg4, Vector3* arg5);
 
     // ?Init@mmCar@@QAEXPADHH@Z
-    ARTS_IMPORT void Init(char* arg1, i32 arg2, i32 arg3);
+    ARTS_IMPORT void Init(aconst char* arg1, i32 arg2, i32 arg3);
 
     // ?IsDrivingDisabled@mmCar@@QAEHXZ
     ARTS_EXPORT b32 IsDrivingDisabled();
@@ -76,7 +76,7 @@ public:
     void PostUpdate() override;
 
     // ?ReInit@mmCar@@QAEXPADH@Z
-    ARTS_EXPORT void ReInit(char* name, i32 variant);
+    ARTS_EXPORT void ReInit(aconst char* name, i32 variant);
 
     // ?ReleaseTrailer@mmCar@@QAEXXZ
     void ReleaseTrailer();

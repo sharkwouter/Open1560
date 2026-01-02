@@ -116,7 +116,7 @@ public:
     ARTS_IMPORT void PlayImpactAudio(i16 arg1, mmIntersection* arg2, Vector3* arg3);
 
     // ?ReInit@mmCarSim@@QAEXPAD@Z
-    ARTS_IMPORT void ReInit(char* arg1);
+    ARTS_IMPORT void ReInit(aconst char* arg1);
 
     // ?ReconfigureDrivetrain@mmCarSim@@QAEXXZ
     ARTS_IMPORT void ReconfigureDrivetrain();

@@ -34,3 +34,9 @@ This will create the Visual Studio project files which will be used in the next 
 Now the code can be openened by double clicking the newly created `build/Open1560.sln` project file for Visual Studio. If all the previous steps were done correctly, clicking `Start Debugging` at the top of the screen in Visual Studio should build and run Open1560. Feel free to play around with the code and make changes.
 
 For more in-depth development information, see [methodology](./methodology.md).
+
+## Contributing
+
+* Run `tools/format.py` to ensure your code is properly formatted.
+* Run `tools/asm.py`, checking there are no unused exports.
+* Ensure your code compilers without warnings.

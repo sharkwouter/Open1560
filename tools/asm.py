@@ -255,3 +255,4 @@ if unused_exports:
     print('Unused exports:')
     for sym in unused_exports:
         print(sym)
+    exit(1)
