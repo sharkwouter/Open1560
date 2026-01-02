@@ -97,7 +97,8 @@ public:
         i32* arg8, i32 arg9, i32 arg10, Callback arg11);
 
     // ?AddHotSpot@UIMenu@@QAEPAVuiWidget@@HPADMMMMVCallback@@@Z
-    ARTS_IMPORT uiWidget* AddHotSpot(i32 arg1, char* arg2, f32 arg3, f32 arg4, f32 arg5, f32 arg6, Callback arg7);
+    ARTS_IMPORT uiWidget* AddHotSpot(
+        i32 arg1, aconst char* arg2, f32 arg3, f32 arg4, f32 arg5, f32 arg6, Callback arg7 = nullptr);
 
     // ?AddIconW@UIMenu@@QAEPAVUIIconW@@HPAULocString@@PADMMMMVCallback@@@Z | unused
     ARTS_IMPORT UIIconW* AddIconW(

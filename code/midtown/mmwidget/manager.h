@@ -240,6 +240,11 @@ public:
         widget_snap_ = enabled;
     }
 
+    uiNavBar* GetNavBar()
+    {
+        return nav_bar_.get();
+    }
+
 private:
     // ?PlayMenuSwitchSound@MenuManager@@AAEXXZ
     ARTS_IMPORT void PlayMenuSwitchSound();

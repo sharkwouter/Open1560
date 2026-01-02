@@ -19,3 +19,38 @@
 define_dummy_symbol(mmui_options);
 
 #include "options.h"
+
+#include "midtown.h"
+#include "mmwidget/manager.h"
+#include "mmwidget/navbar.h"
+
+OptionsMenu::OptionsMenu(i32 menu_id)
+    : UIMenu(menu_id)
+{
+    AssignName(LOC_TEXT("Main Options Menu"));
+
+    AddBMButton(IDC_OPTIONS_MENU_AUDIO, "onav_aud"_xconst, UI_LEFT_MARGIN, 0.2f, 4);
+    SetFocusWidget(-1);
+    AddBMButton(IDC_OPTIONS_MENU_CONTROLS, "onav_cont"_xconst, UI_LEFT_MARGIN, 0.4f, 4);
+    AddBMButton(IDC_OPTIONS_MENU_GRAPHICS, "onav_gra"_xconst, UI_LEFT_MARGIN, 0.6f, 4);
+    AddBMButton(IDC_OPTIONS_MENU_CREDITS, "onav_credit"_xconst, UI_LEFT_MARGIN, 0.8f, 4);
+
+    uiWidget* hotspot = AddHotSpot(-1, "Previous"_xconst, 0.9f, 0.9f, 0.9f, 0.0f);
+    previous_x_ = hotspot->X;
+    previous_y_ = hotspot->Y;
+
+    SetBstate(0);
+}
+
+void OptionsMenu::PostSetup()
+{
+    MenuMgr()->GetNavBar()->SetPrevPos(0.0f, 0.0f);
+}
+
+void OptionsMenu::PreSetup()
+{
+    if (!GraphicsChange)
+        GraphicsPreviousMenu = static_cast<u8>(prev_menu_id_);
+
+    MenuMgr()->GetNavBar()->SetPrevPos(previous_x_, previous_y_);
+}
