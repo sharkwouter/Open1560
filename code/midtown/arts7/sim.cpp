@@ -668,7 +668,7 @@ void asSimulation::Device()
 
     for (eqEvent event; keys_queue_.Pop(&event);)
     {
-        if ((event.Type != eqEventType::Keyboard) || !(event.Key.Modifiers & EQ_KMOD_DOWN))
+        if ((event.Type != eqEventType::Keyboard) || !event.Key.IsPressEvent())
             continue;
 
         i32 vkey = event.Key.Key;

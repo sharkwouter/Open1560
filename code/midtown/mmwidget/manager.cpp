@@ -30,6 +30,7 @@ define_dummy_symbol(mmwidget_manager);
 #include "mmeffects/card2d.h"
 
 #include "menu.h"
+#include "navbar.h"
 #include "pointer.h"
 #include "widget.h"
 
@@ -119,6 +120,20 @@ void MenuManager::Update()
     if (last_drawn_)
         last_drawn_->Update();
 
+    if (widget_snap_)
+    {
+        if (UIMenu* menu = active_menu_)
+        {
+            if (uiWidget* focus = menu->GetActiveWidget())
+            {
+                auto sq = eqEventHandler::SuperQ;
+                f32 x = (focus->MinX + focus->MaxX) * sq->GetCenterX();
+                f32 y = (focus->MinY + focus->MaxY) * sq->GetCenterY();
+                sq->WarpMouse(x, y, false);
+            }
+        }
+    }
+
     pointer_->Update();
 }
 
@@ -150,7 +165,6 @@ void MenuManager::SwitchNow(i32 id)
         }
 
         SetFocus(GetCurrentMenu());
-
         active_menu_->SetSelected();
     }
 }
@@ -233,4 +247,41 @@ i32 MenuManager::MenuState(i32 menu)
         return menus_[index]->GetState();
 
     return 0;
+}
+
+uiWidget* MenuManager::MouseAction(i32 button, f32 x, f32 y)
+{
+    if (dialog_menu_)
+        return dialog_menu_->MouseHitCheck(button, x, y);
+
+    if (i32 index = FindMenu(active_menu_id_); index >= 0)
+    {
+        if (uiWidget* widget = menus_[index]->MouseHitCheck(button, x, y))
+            return widget;
+    }
+
+    if (nav_bar_)
+        return nav_bar_->MouseHitCheck(button, x, y);
+
+    return nullptr;
+}
+
+void MenuManager::RegisterWidgetFocus(b32 focused, f32 x, f32 y, f32 w, f32 h, uiWidget* widget)
+{
+    if (!focused || w == 0.0)
+    {
+        focused_widget_ = nullptr;
+        has_active_widget_ = false;
+    }
+    else
+    {
+        uiWidget* active = active_widget_;
+        has_active_widget_ = true;
+        focused_widget_ = widget;
+
+        active->MinX = x;
+        active->MinY = y;
+        active->MaxX = x + w;
+        active->MaxY = y + h;
+    }
 }

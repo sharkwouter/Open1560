@@ -350,7 +350,7 @@ public:
     ARTS_IMPORT i32 ToggleFFEnabled(i32 arg1);
 
     // ?Update@mmInput@@UAEXXZ
-    ARTS_IMPORT void Update() override;
+    ARTS_EXPORT void Update() override;
 
     // ?WheelConnected@mmInput@@QAEHXZ
     b32 WheelConnected();
@@ -437,7 +437,7 @@ private:
     ARTS_IMPORT void PollContinuous(mmIO* arg1);
 
     // ?ProcessEvents@mmInput@@AAEXXZ
-    ARTS_EXPORT void ProcessEvents();
+    void ProcessEvents();
 
     // ?ProcessJoyEvents@mmInput@@AAEXXZ
     ARTS_IMPORT void ProcessJoyEvents();

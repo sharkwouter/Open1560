@@ -20,10 +20,12 @@ define_dummy_symbol(mminput_input);
 
 #include "input.h"
 
+#include "agi/pipeline.h"
 #include "eventq7/keys.h"
 #include "mmcityinfo/state.h"
 
 #include "io.h"
+#include "joyman.h"
 
 enum
 {
@@ -125,6 +127,40 @@ void mmInput::ProcessEvents()
     ClearEventHitFlags();
 }
 
+void mmInput::Update()
+{
+    if (ResetMouse)
+    {
+        ResetMouse = false;
+
+        MousePrevX = eqEventHandler::SuperQ->GetMouseVirtualX();
+        MousePrevY = eqEventHandler::SuperQ->GetMouseVirtualY();
+
+        ScreenCenterX = Pipe()->GetWidth() * 0.5f;
+        ScreenCenterY = Pipe()->GetHeight() * 0.5f;
+
+        InvScreenCenterX = 1.0f / ScreenCenterX;
+        InvScreenCenterY = 1.0f / ScreenCenterY;
+    }
+
+    if (WantPoll)
+    {
+        StateCaptured = PollStates();
+    }
+    else
+    {
+        if (InputConfiguration > 1)
+        {
+            Joy->Update();
+            Joy->GenerateEvents();
+        }
+
+        ProcessEvents();
+
+        CurrentState = ProcessStates();
+    }
+}
+
 void mmInput::ProcessKeyboardEvents()
 {
     eqEvent event;
@@ -142,8 +178,7 @@ void mmInput::ProcessKeyboardEvents()
                 if (event.Key.Key == 0)
                     event.Key.Key = ((event.Key.State >> 16) & 0xFF) | ((event.Key.State >> 17) & 0x80);
 
-                scan = (event.Key.Key != 0) && (event.Key.Modifiers & EQ_KMOD_DOWN) &&
-                    !(event.Key.Modifiers & EQ_KMOD_REPEAT);
+                scan = event.Key.IsPressEvent();
             }
         }
         else if (event.Type == eqEventType::Mouse)

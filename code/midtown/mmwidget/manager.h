@@ -155,7 +155,7 @@ public:
     ARTS_EXPORT i32 MenuState(i32 menu);
 
     // ?MouseAction@MenuManager@@QAEPAVuiWidget@@HMM@Z
-    ARTS_IMPORT uiWidget* MouseAction(i32 arg1, f32 arg2, f32 arg3);
+    ARTS_EXPORT uiWidget* MouseAction(i32 button, f32 x, f32 y);
 
     // ?NotifyMouseSelect@MenuManager@@QAEXPAVUIMenu@@@Z
     ARTS_IMPORT void NotifyMouseSelect(UIMenu* arg1);
@@ -170,7 +170,7 @@ public:
     ARTS_IMPORT void PlaySound(i32 arg1);
 
     // ?RegisterWidgetFocus@MenuManager@@QAEXHMMMMPAVuiWidget@@@Z
-    ARTS_IMPORT void RegisterWidgetFocus(i32 arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg5, uiWidget* arg6);
+    ARTS_EXPORT void RegisterWidgetFocus(b32 focused, f32 x, f32 y, f32 w, f32 h, uiWidget* widget);
 
     // ?ResChange@MenuManager@@UAEXHH@Z
     ARTS_IMPORT void ResChange(i32 arg1, i32 arg2) override;
@@ -235,6 +235,11 @@ public:
         active_ime_field_ = field;
     }
 
+    void ToggleWidgetSnapping(bool enabled)
+    {
+        widget_snap_ = enabled;
+    }
+
 private:
     // ?PlayMenuSwitchSound@MenuManager@@AAEXXZ
     ARTS_IMPORT void PlayMenuSwitchSound();
@@ -248,7 +253,7 @@ private:
     Ptr<asLinearCS[]> lcss_;
     Ptr<uiNavBar> nav_bar_;
     i32 field_38;
-    i32 has_active_widget_;
+    i32 has_active_widget_; // TODO: Rename has_focused_widget_ ?
     b32 is_3D_;
     b32 is_popup_open_;
     uiWidget* focused_widget_;
@@ -302,6 +307,11 @@ private:
     Ptr<AudSound> switch_sound_;
     Ptr<AudSound> ui_sounds_;
     char* default_background_;
+#ifdef ARTS_STANDALONE
+    bool widget_snap_;
+#else
+    static inline bool widget_snap_;
+#endif
 };
 
 check_size(MenuManager, 0x140);

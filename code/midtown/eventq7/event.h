@@ -52,6 +52,40 @@ public:
     // ?SuperQ@eqEventHandler@@2PAV1@A
     ARTS_EXPORT static eqEventHandler* SuperQ;
 
+    f32 GetMouseX() const
+    {
+        return static_cast<f32>(mouse_x_);
+    }
+
+    f32 GetMouseY() const
+    {
+        return static_cast<f32>(mouse_y_);
+    }
+
+    f32 GetCenterX() const
+    {
+        return center_x_;
+    }
+
+    f32 GetCenterY() const
+    {
+        return center_y_;
+    }
+
+    i32 GetMouseVirtualX() const
+    {
+        return mouse_virtual_x_;
+    }
+
+    i32 GetMouseVirtualY() const
+    {
+        return mouse_virtual_y_;
+    }
+
+    void SendKeyPress(void* window, i32 modifiers, i32 vkey, i32 vsc);
+    void SendMousePress(void* window, u32 button, bool pressed);
+    void WarpMouse(f32 x, f32 y, bool send);
+
 protected:
     friend class eqEventMonitor;
 
@@ -77,6 +111,13 @@ protected:
 };
 
 check_size(eqEventHandler, 0x164);
+
+#define EQ_SEND(NAME, ...)                               \
+    for (eqEventMonitor * monitor : monitors_)           \
+    {                                                    \
+        if (monitor && (monitor->channels_ & channels_)) \
+            monitor->NAME(__VA_ARGS__);                  \
+    }
 
 class eqEventMonitor
 {

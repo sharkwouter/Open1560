@@ -82,6 +82,47 @@ void eqEventHandler::RemoveClient(eqEventMonitor* monitor)
     monitor->handler_ = nullptr;
 }
 
+void eqEventHandler::SendKeyPress(void* window, i32 modifiers, i32 vkey, i32 vsc)
+{
+    if (vsc)
+        key_states_[vsc] = !!(modifiers & EQ_KMOD_DOWN);
+
+    i32 lparam = 0x1 | ((vsc & 0x7F) << 16) | ((vsc & 0x80) << 17);
+
+    if (modifiers & EQ_KMOD_REPEAT)
+        lparam |= (0x1 << 30);
+
+    if (!(modifiers & EQ_KMOD_DOWN))
+        lparam |= (0x1 << 30) | (0x1 << 31);
+
+    if (vkey)
+        EQ_SEND(Keyboard, window, modifiers, vkey, 0, lparam);
+}
+
+void eqEventHandler::SendMousePress(void* window, u32 button, bool pressed)
+{
+    if (pressed)
+        buttons_ |= button;
+    else
+        buttons_ &= ~button;
+
+    u32 changed_buttons = buttons_ ^ prev_buttons_;
+    u32 new_buttons = buttons_ & changed_buttons;
+
+    EQ_SEND(Mouse, window, new_buttons, changed_buttons, buttons_, mouse_x_, mouse_y_, 0, 0);
+
+    prev_buttons_ = buttons_;
+}
+
+void eqEventHandler::WarpMouse(f32 x, f32 y, bool send)
+{
+    mouse_x_ = static_cast<i32>(std::clamp(x, 0.0f, center_x_ * 2.0f));
+    mouse_y_ = static_cast<i32>(std::clamp(y, 0.0f, center_y_ * 2.0f));
+
+    if (send)
+        EQ_SEND(Mouse, 0, 0, 0, buttons_, mouse_x_, mouse_y_, 0, 0);
+}
+
 eqEventMonitor::eqEventMonitor(i32 channels)
     : channels_(channels)
 {}

@@ -38,6 +38,5 @@ private:
 
     i32 mouse_width_ {};
     i32 mouse_height_ {};
-
     bool mouse_moved_ {};
 };

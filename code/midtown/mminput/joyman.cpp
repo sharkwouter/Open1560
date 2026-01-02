@@ -20,7 +20,12 @@ define_dummy_symbol(mminput_joyman);
 
 #include "joyman.h"
 
+#include "arts7/sim.h"
+#include "eventq7/event.h"
+#include "eventq7/keys.h"
+
 #include "input.h"
+#include "joystick.h"
 
 i32 mmJoyMan::ButtonToBit(i32 button)
 {
@@ -42,4 +47,97 @@ i32 mmJoyMan::GetOneButton(ilong flags)
     }
 
     return -1;
+}
+
+void mmJoyMan::Update()
+{
+    for (i32 i = 0; i < NumSticks; ++i)
+        Sticks[i].Update();
+}
+
+static mem::cmd_param PARAM_joynav {"joynav", "Enable using the joystick for menu navigation"};
+
+void mmJoyMan::GenerateEvents()
+{
+    if (!PARAM_joynav.get_or(true))
+        return;
+
+    // TODO: Store state in mmJoystick
+    static u32 prev_buttton = 0;
+    static u32 prev_axes = 0;
+    static bool use_mouse = false;
+
+    u32 buttons = 0;
+    u32 axes = 0;
+
+    auto sq = eqEventHandler::SuperQ;
+
+    for (i32 i = 0; i < NumSticks; ++i)
+    {
+        const auto& stick = Sticks[i];
+        buttons |= stick.ButtonFlags;
+
+        static const f32 deadzone = 0.25f;
+        static const f32 exp = 2.0f;
+        static const f32 speed = 1200.0f;
+
+        if (f32 x = std::abs(stick.XAxis.Value); x > deadzone)
+        {
+            f32 xrel = std::copysign(std::pow(x, exp), stick.XAxis.Value) * Sim()->GetUpdateDelta() * speed;
+            sq->WarpMouse(sq->GetMouseX() + xrel, sq->GetMouseY(), true);
+            use_mouse = true;
+        }
+
+        if (f32 y = std::abs(stick.YAxis.Value); y > deadzone)
+        {
+            f32 yrel = std::copysign(std::pow(y, exp), stick.YAxis.Value) * Sim()->GetUpdateDelta() * speed;
+            sq->WarpMouse(sq->GetMouseX(), sq->GetMouseY() + yrel, true);
+            use_mouse = true;
+        }
+
+        if (stick.PovAxis.Value == 0.25f)
+            axes |= 1;
+        else if (stick.PovAxis.Value == 0.75f)
+            axes |= 2;
+        else if (stick.PovAxis.Value == 1.00f)
+            axes |= 4;
+        else if (stick.PovAxis.Value == 0.50f)
+            axes |= 8;
+    }
+
+    if (u32 changed = buttons ^ std::exchange(prev_buttton, buttons))
+    {
+        const auto button_button = [&](mmJoyInput button, i32 btn) {
+            if (u32 bit = ButtonToBit(button); changed & bit)
+                sq->SendMousePress(nullptr, btn, !!(buttons & bit));
+        };
+
+        const auto button_key = [&](mmJoyInput button, i32 vkey) {
+            if (u32 bit = ButtonToBit(button); changed & bit)
+                sq->SendKeyPress(nullptr, (buttons & bit) ? EQ_KMOD_DOWN : 0, vkey, 0);
+        };
+
+        if (use_mouse)
+            button_button(mmJoyInput::JButton1, EQ_BUTTON_LEFT);
+        else
+            button_key(mmJoyInput::JButton1, EQ_VK_GAMEPAD_A);
+
+        button_key(mmJoyInput::JButton2, EQ_VK_GAMEPAD_B);
+        button_key(mmJoyInput::JButton7, EQ_VK_GAMEPAD_VIEW);
+        button_key(mmJoyInput::JButton8, EQ_VK_GAMEPAD_MENU);
+    }
+
+    if (u32 changed = axes ^ std::exchange(prev_axes, axes))
+    {
+        const auto axis_key = [&](i32 axis, i32 vkey) {
+            if (changed & axis)
+                sq->SendKeyPress(nullptr, (axes & axis) ? EQ_KMOD_DOWN : 0, vkey, 0);
+        };
+
+        axis_key(1, EQ_VK_GAMEPAD_DPAD_LEFT);
+        axis_key(2, EQ_VK_GAMEPAD_DPAD_RIGHT);
+        axis_key(4, EQ_VK_GAMEPAD_DPAD_UP);
+        axis_key(8, EQ_VK_GAMEPAD_DPAD_DOWN);
+        use_mouse = false;
+    }
 }

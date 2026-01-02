@@ -151,8 +151,8 @@ public:
         f32 arg8, i32 arg9, i32 arg10, Callback arg11);
 
     // ?AddWidget@UIMenu@@QAEXPAVuiWidget@@PADMMMMH1@Z
-    ARTS_IMPORT void AddWidget(
-        uiWidget* arg1, char* arg2, f32 arg3, f32 arg4, f32 arg5, f32 arg6, i32 arg7, char* arg8);
+    ARTS_EXPORT void AddWidget(
+        uiWidget* widget, aconst char* label, f32 x, f32 y, f32 w, f32 h, i32 id, aconst char* icon);
 
     // ?AssignBackground@UIMenu@@QAEXPAD@Z
     ARTS_EXPORT void AssignBackground(aconst char* background_name);
@@ -280,6 +280,11 @@ public:
 
     uiWidget* FindWidget(i32 id);
 
+    uiWidget* GetActiveWidget() const
+    {
+        return widget_count_ ? widgets_[*p_b_state_] : nullptr;
+    }
+
 protected:
     i32 action_source_;
     i32 state_;
@@ -288,7 +293,7 @@ protected:
     i32 field_30;
     i32 widget_count_;
     i32 field_38;
-    uiWidget** widgets_;
+    Ptr<uiWidget*[]> widgets_;
     ConstString menu_name_;
     char* field_44;
     i32 field_48;

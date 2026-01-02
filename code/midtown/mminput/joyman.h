@@ -23,6 +23,7 @@ struct HINSTANCE__;
 struct HWND__;
 
 class mmEffectFF;
+class mmJoystick;
 
 // ?inputEnumDeviceProc@@YGHPAUDIDEVICEINSTANCEA@@PAX@Z
 ARTS_IMPORT i32 ARTS_STDCALL inputEnumDeviceProc(DIDEVICEINSTANCEA* arg1, void* arg2);
@@ -88,9 +89,13 @@ public:
     ARTS_IMPORT i32 ToggleEnabled(i32 arg1);
 
     // ?Update@mmJoyMan@@QAEXXZ
-    ARTS_IMPORT void Update();
+    ARTS_EXPORT void Update();
 
-    u8 gap0[0x48];
+    void GenerateEvents();
+
+    u8 field_0[64] {};
+    mmJoystick* Sticks {};
+    i32 NumSticks {};
 };
 
 check_size(mmJoyMan, 0x48);

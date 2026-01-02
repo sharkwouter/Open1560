@@ -171,21 +171,20 @@ void mmGame::UpdateDebugInput()
 {
     while (EventQueue->Pop(&CurrentEvent))
     {
-        if ((CurrentEvent.Type != eqEventType::Keyboard) || (CurrentEvent.Key.Key == 0))
+        if (CurrentEvent.Type != eqEventType::Keyboard)
             continue;
 
         eqKeyboardEvent& event = CurrentEvent.Key;
 
-        if (event.Modifiers & EQ_KMOD_DOWN)
-        {
-            if (event.Key == EQ_VK_F7 &&
-                (event.Modifiers & (EQ_KMOD_DOWN | EQ_KMOD_SHIFT | EQ_KMOD_CTRL | EQ_KMOD_ALT)) ==
-                    (EQ_KMOD_DOWN | EQ_KMOD_SHIFT | EQ_KMOD_CTRL | EQ_KMOD_ALT) &&
-                !NETMGR.InSession())
-            {
-                Popup->ProcessChat();
-            }
+        if (!event.IsPressEvent())
+            continue;
 
+        if (event.Key == EQ_VK_F7 &&
+            (event.Modifiers & (EQ_KMOD_DOWN | EQ_KMOD_SHIFT | EQ_KMOD_CTRL | EQ_KMOD_ALT)) ==
+                (EQ_KMOD_DOWN | EQ_KMOD_SHIFT | EQ_KMOD_CTRL | EQ_KMOD_ALT) &&
+            !NETMGR.InSession())
+        {
+            Popup->ProcessChat();
             continue;
         }
 
@@ -390,7 +389,8 @@ void mmGame::UpdateDebugInput()
         {
             switch (event.Key)
             {
-                case EQ_VK_ESCAPE: {
+                case EQ_VK_ESCAPE:
+                case EQ_VK_GAMEPAD_MENU: {
                     if (VoiceCommentary)
                         VoiceCommentary->StopNow();
 
@@ -587,10 +587,13 @@ void mmGame::UpdatePaused()
 {
     for (i32 event = -1; GameInput()->PopEvent(&event);)
     {
-        switch (event)
+        if (!IsPopupEnabled())
         {
-            case IOID_CAM: Player->ToggleCam(); break;
-            case IOID_XVIEW: Player->ToggleExternalView(); break;
+            switch (event)
+            {
+                case IOID_CAM: Player->ToggleCam(); break;
+                case IOID_XVIEW: Player->ToggleExternalView(); break;
+            }
         }
     }
 
@@ -601,7 +604,7 @@ void mmGame::UpdatePaused()
 
         eqKeyboardEvent& event = CurrentEvent.Key;
 
-        if (event.Modifiers & EQ_KMOD_DOWN)
+        if (!event.IsPressEvent())
             continue;
 
         if (event.Modifiers & EQ_KMOD_SHIFT)

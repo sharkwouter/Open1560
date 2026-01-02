@@ -23,9 +23,12 @@ define_dummy_symbol(mmwidget_menu);
 #include "agi/pipeline.h"
 #include "arts7/midgets.h"
 #include "eventq7/keys.h"
-#include "manager.h"
 #include "pcwindis/dxinit.h"
+
+#include "manager.h"
 #include "widget.h"
+
+#include <algorithm>
 
 #include <SDL3/SDL_keyboard.h>
 
@@ -46,32 +49,92 @@ void UIMenu::CheckInput()
     while (MenuMgr()->GetEventQ()->Pop(&event))
     {
         if (event.Type != eqEventType::Keyboard)
-            continue;
-
-        // Returns 1 if the menu is active, and the event is for a key press
-        i32 is_key_press = ScanInput(&event);
-
-        if (event.Key.Key == EQ_VK_ESCAPE)
         {
-            if (is_key_press != 1)
-            {
+            if (event.Type == eqEventType::Mouse)
+                MenuMgr()->ToggleWidgetSnapping(false);
+
+            continue;
+        }
+
+        eqKeyboardEvent& kev = event.Key;
+
+        switch (kev.Key) // Enable widget snapping when using arrows or joystick
+        {
+            case EQ_VK_LEFT:
+            case EQ_VK_RIGHT:
+            case EQ_VK_UP:
+            case EQ_VK_DOWN:
+            case EQ_VK_GAMEPAD_A:
+            case EQ_VK_GAMEPAD_B:
+            case EQ_VK_GAMEPAD_DPAD_LEFT:
+            case EQ_VK_GAMEPAD_DPAD_RIGHT:
+            case EQ_VK_GAMEPAD_DPAD_UP:
+            case EQ_VK_GAMEPAD_DPAD_DOWN:
+            case EQ_VK_GAMEPAD_VIEW: MenuMgr()->ToggleWidgetSnapping(true); break;
+        }
+
+        switch (kev.Key) // Translate gamepad buttons to keyboard buttons
+        {
+            case EQ_VK_GAMEPAD_A: kev.Key = EQ_VK_RETURN; break;
+            case EQ_VK_GAMEPAD_B: kev.Key = EQ_VK_ESCAPE; break;
+            case EQ_VK_GAMEPAD_DPAD_LEFT: kev.Key = EQ_VK_LEFT; break;
+            case EQ_VK_GAMEPAD_DPAD_RIGHT: kev.Key = EQ_VK_RIGHT; break;
+            case EQ_VK_GAMEPAD_DPAD_UP: kev.Key = EQ_VK_UP; break;
+            case EQ_VK_GAMEPAD_DPAD_DOWN: kev.Key = EQ_VK_DOWN; break;
+        }
+
+        if (ScanInput(&event))
+        {
+            if (!kev.IsMouseButton())
+                KeyboardAction(event);
+        }
+        else
+        {
+            if (kev.Key == EQ_VK_ESCAPE)
                 ClearAction();
-                continue;
-            }
         }
-        else if ((event.Key.Key < 8 || is_key_press != 1) &&
-            (event.Key.Char < 8 || is_key_press != 1)) // Ignore mouse buttons?
-        {
-            continue;
-        }
-
-        KeyboardAction(event);
     }
 }
 
 i32 UIMenu::IsAnOptionMenu()
 {
     return 0;
+}
+
+void UIMenu::AddWidget(uiWidget* widget, aconst char* label, f32 x, f32 y, f32 w, f32 h, i32 id, aconst char* icon)
+{
+    widget->X = x;
+    widget->Y = y;
+    widget->Width = w;
+    widget->Height = h;
+    widget->MinX = x;
+    widget->MinY = y;
+    widget->MaxX = x + w;
+    widget->MaxY = y + h;
+    widget->field_6C = 0;
+    widget->Label = label;
+    widget->Icon = icon;
+    widget->Menu = this;
+    widget->WidgetID = (id != -1) ? id : widget_count_;
+
+    Ptr<uiWidget*[]> widgets = arnewa uiWidget * [widget_count_ + 1] {};
+    for (i32 i = 0; i < widget_count_; ++i)
+        widgets[i] = widgets_[i];
+    widgets[widget_count_] = widget;
+    widgets_ = std::move(widgets);
+    ++widget_count_;
+
+    // Try and maintain a top-to-bottom order so widgets are navigated in a sane way
+    std::sort(&widgets_[0], &widgets_[widget_count_], [](uiWidget* lhs, uiWidget* rhs) {
+        if (lhs->MaxY < rhs->MinY)
+            return true;
+        if (lhs->MinY > rhs->MaxY)
+            return false;
+        return lhs->X < rhs->X;
+    });
+
+    if (label && *label)
+        widget->AddToolTip(this, LOC_TEXT(label));
 }
 
 void UIMenu::AssignBackground(aconst char* background_name)
@@ -110,6 +173,8 @@ void UIMenu::ScaleWidget(f32& x, f32& y, f32& w, f32& h)
 
 b32 UIMenu::ScanInput(eqEvent* event)
 {
+    // Returns true if the menu was active, and the event was for a key press
+
     if (!IsNodeActive() || (event->Type != eqEventType::Keyboard) || !(event->Key.Modifiers & EQ_KMOD_DOWN))
         return false;
 

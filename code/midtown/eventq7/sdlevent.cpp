@@ -95,13 +95,6 @@ void SDLEventHandler::EndGfx()
     }
 }
 
-#define EQ_SEND(NAME, ...)                               \
-    for (eqEventMonitor * monitor : monitors_)           \
-    {                                                    \
-        if (monitor && (monitor->channels_ & channels_)) \
-            monitor->NAME(__VA_ARGS__);                  \
-    }
-
 void SDLEventHandler::Update(i32)
 {
     SDL_PumpEvents();
@@ -215,7 +208,7 @@ void SDLEventHandler::HandleEvent(const SDL_Event& event)
 
         case SDL_EVENT_KEY_DOWN:
         case SDL_EVENT_KEY_UP: {
-            u32 modifiers = 0;
+            i32 modifiers = 0;
 
             if (event.key.down)
                 modifiers |= EQ_KMOD_DOWN;
@@ -232,19 +225,7 @@ void SDLEventHandler::HandleEvent(const SDL_Event& event)
             u8 vsc = 0;
             TranslateScancode(event.key.scancode, vkey, vsc);
 
-            if (vsc)
-                key_states_[vsc] = !!(modifiers & EQ_KMOD_DOWN);
-
-            i32 lparam = 0x1 | ((vsc & 0x7F) << 16) | ((vsc & 0x80) << 17);
-
-            if (modifiers & EQ_KMOD_REPEAT)
-                lparam |= (0x1 << 30);
-
-            if (!(modifiers & EQ_KMOD_DOWN))
-                lparam |= (0x1 << 30) | (0x1 << 31);
-
-            if (vkey)
-                EQ_SEND(Keyboard, window_id(event.key.windowID), modifiers, vkey, 0, lparam);
+            SendKeyPress(window_id(event.key.windowID), modifiers, vkey, vsc);
 
             break;
         }
@@ -271,18 +252,7 @@ void SDLEventHandler::HandleEvent(const SDL_Event& event)
                 case SDL_BUTTON_MIDDLE: button = EQ_BUTTON_MIDDLE; break;
             }
 
-            if (event.button.down)
-                buttons_ |= button;
-            else
-                buttons_ &= ~button;
-
-            u32 changed_buttons = buttons_ ^ prev_buttons_;
-            u32 new_buttons = buttons_ & changed_buttons;
-
-            EQ_SEND(Mouse, window_id(event.button.windowID), new_buttons, changed_buttons, buttons_, mouse_x_, mouse_y_,
-                0, 0);
-
-            prev_buttons_ = buttons_;
+            SendMousePress(window_id(event.button.windowID), button, event.button.down);
 
             break;
         }

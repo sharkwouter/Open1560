@@ -19,6 +19,10 @@
 #pragma once
 
 #include "arts7/node.h"
+#include "vector7/vector2.h"
+
+class agiBitmap;
+class uiWidget;
 
 class sfPointer final : public asNode
 {
@@ -27,7 +31,7 @@ public:
     ARTS_IMPORT sfPointer();
 
     // ??1sfPointer@@UAE@XZ
-    ARTS_IMPORT ~sfPointer() override;
+    ARTS_EXPORT ~sfPointer() override;
 
     // ?Cull@sfPointer@@UAEXXZ
     ARTS_IMPORT void Cull() override;
@@ -54,10 +58,17 @@ public:
     ARTS_IMPORT static void DeclareFields();
 
 private:
-    // ?UpdateAttached@sfPointer@@AAEXXZ | unused
-    void UpdateAttached();
-
-    u8 gap20[0x34];
+    Rc<agiBitmap> CursorTexture;
+    Vector2 CurrentPos;
+    Vector2 PrevPos;
+    i32 MaxX;
+    i32 MaxY;
+    i32 field_3C;
+    i32 field_40;
+    i32 State;
+    f32 field_48;
+    f32 field_4C;
+    uiWidget* CurrentWidget;
 };
 
 check_size(sfPointer, 0x54);

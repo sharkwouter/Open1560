@@ -19,6 +19,7 @@
 #pragma once
 
 #include "event.h"
+#include "keys.h"
 
 enum class eqEventType : u32
 {
@@ -59,6 +60,16 @@ struct eqKeyboardEvent : eqCommonEvent
     i32 Key;       // EQ_KEY_* or EQ_VK_*
     i32 Char;      // Input character
     i32 State;     // Win32 Keystroke Message Flags
+
+    bool IsPressEvent() const
+    {
+        return (Key != 0) && (Modifiers & EQ_KMOD_DOWN) && !(Modifiers & EQ_KMOD_REPEAT);
+    }
+
+    bool IsMouseButton()
+    {
+        return (Key >= 1) && (Key <= 7);
+    }
 };
 
 struct eqMouseEvent : eqCommonEvent

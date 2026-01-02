@@ -61,7 +61,7 @@ public:
 
 check_size(mmJaxis, 0x1C);
 
-struct mmJoystick final
+class mmJoystick final
 {
 public:
     // ??0mmJoystick@@QAE@XZ
@@ -107,7 +107,7 @@ public:
     ARTS_IMPORT i32 SetDeadZone(f32 arg1);
 
     // ?Update@mmJoystick@@QAEXXZ
-    ARTS_EXPORT void Update();
+    void Update();
 
     // ?inputPrepareDevice@mmJoystick@@QAEHXZ
     ARTS_IMPORT i32 inputPrepareDevice();
