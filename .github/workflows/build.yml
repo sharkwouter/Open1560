@@ -23,7 +23,7 @@ jobs:
         msbuild-architecture: x86
       
     - name: Format Check
-      run: python3 tools/asm.py --dry
+      run: python3 tools/format.py --dry
 
     - name: Premake
       run: tools/premake5.exe ${{env.PREMAKE_GENERATOR}} --MM1_GAME_DIRECTORY="${{github.workspace}}/build/output/"
