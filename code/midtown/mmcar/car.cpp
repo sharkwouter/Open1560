@@ -118,9 +118,9 @@ void mmCar::PostUpdate()
 
     Shards.Update();
 
-    Sim.ExhaustPtx.Update();
-    Sim.GrassPtx.Update();
-    Sim.ExplosionPtx.Update();
+    Sim.SmokeParticles.Update();
+    Sim.GrassParticles.Update();
+    Sim.ExplosionParticles.Update();
 
 #ifdef ARTS_DEV_BUILD
     f32 elapsed = t.Time();

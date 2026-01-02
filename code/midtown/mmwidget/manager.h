@@ -176,7 +176,7 @@ public:
     ARTS_IMPORT void ResChange(i32 arg1, i32 arg2) override;
 
     // ?ScanGlobalKeys@MenuManager@@QAEHH@Z
-    ARTS_IMPORT i32 ScanGlobalKeys(i32 arg1);
+    ARTS_IMPORT b32 ScanGlobalKeys(i32 arg1);
 
     // ?SetBackgroundImage@MenuManager@@QAEXPAD@Z
     ARTS_IMPORT void SetBackgroundImage(char* arg1);

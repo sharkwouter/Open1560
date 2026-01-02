@@ -112,11 +112,11 @@ protected:
 
 check_size(eqEventHandler, 0x164);
 
-#define EQ_SEND(NAME, ...)                               \
-    for (eqEventMonitor* monitor : monitors_)            \
-    {                                                    \
-        if (monitor && (monitor->channels_ & channels_)) \
-            monitor->NAME(__VA_ARGS__);                  \
+#define EQ_SEND(NAME, ...)                                   \
+    for (eqEventMonitor* monitor : monitors_)                \
+    {                                                        \
+        if (monitor && (monitor->GetChannels() & channels_)) \
+            monitor->NAME(__VA_ARGS__);                      \
     }
 
 class eqEventMonitor
@@ -150,7 +150,12 @@ public:
     // ?SetWantMotion@eqEventMonitor@@QAEXH@Z | unused
     void SetWantMotion(i32 enabled);
 
-    // private:
+    u32 GetChannels() const
+    {
+        return channels_;
+    }
+
+private:
     friend class eqEventHandler;
 
     eqEventHandler* handler_ {};

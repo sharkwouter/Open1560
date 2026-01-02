@@ -20,19 +20,20 @@ define_dummy_symbol(mmcar_wheel);
 
 #include "wheel.h"
 
-#include "car.h"
-
 #include "arts7/sim.h"
 #include "mmbangers/active.h"
 
+#include "car.h"
+
 void mmWheel::GenerateSkidParticles()
 {
-    ParticleCount +=
-        Sim()->GetUpdateDelta() * ParticleMultiplier * PtxMaxSkidCount * std::clamp(CarSim->Speed / 20.0f, 0.3f, 1.0f);
+    const f32 drift = std::abs(LongSlipPercent);
+    const f32 skid = std::abs(LatSlipPercent);
+    const f32 slip = std::max(drift, skid);
+    const f32 speed = std::clamp(CarSim->Speed * 0.1f, 0.1f, 1.0f);
+    ParticleCount += Sim()->GetUpdateDelta() * ParticleMultiplier * PtxMaxSkidCount * std::max(slip * speed, 0.25f);
 }
 
 static const f32 PtxFrameRate = 30.0f;
-
 static mem::cmd_param PARAM_maxskid {"maxskid"};
-
 hook_func(INIT_main, [] { mmWheel::PtxMaxSkidCount = PtxFrameRate * PARAM_maxskid.get_or(1.0f); });

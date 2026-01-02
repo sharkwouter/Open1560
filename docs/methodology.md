@@ -21,9 +21,11 @@
 ## 1386
 Earliest known build. 
 Used for beta testing. The CD included "MSReport", with information for uploading bug reports to Microsoft via FTP.
+Available at https://archive.org/details/midtown_202508.
 
 ## 1427
 Probably the one seen in GDC, March 1999.
+Available at https://archive.org/details/midtown-madness_202508.
 
 ## 1549
 Found in an old .icd alongside the 1560 builds. Needs a custom mmlang.dll to run.

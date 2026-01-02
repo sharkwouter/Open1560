@@ -113,6 +113,10 @@ check_size(StructType, 0x8);
 
 ARTS_NOINLINE MetaType* Struct(MetaClass* target)
 {
+#ifndef ARTS_STANDALONE
+    target = MetaClass::FindByName(target->GetName()); // Ensure we are pointing to the correct version of a MetaClass
+#endif
+
     return new StructType(target);
 }
 

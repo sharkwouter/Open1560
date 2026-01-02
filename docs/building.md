@@ -39,4 +39,4 @@ For more in-depth development information, see [methodology](./methodology.md).
 
 * Run `tools/format.py` to ensure your code is properly formatted.
 * Run `tools/asm.py`, checking there are no unused exports.
-* Ensure your code compilers without warnings.
+* Ensure your code compiles without warnings.

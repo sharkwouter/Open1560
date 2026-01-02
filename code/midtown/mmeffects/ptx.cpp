@@ -171,7 +171,7 @@ void asParticles::Update()
 
     i32 frames = static_cast<i32>(Elapsed * PtxFrameRate) - old_frames;
 
-    if (BirthRule && (Elapsed < BirthRule->SpewRateLimit || (BirthRule->SpewRateLimit == 0.0f)))
+    if (BirthRule && (Elapsed < BirthRule->SpewTimeLimit || (BirthRule->SpewTimeLimit == 0.0f)))
     {
         SpewFraction += BirthRule->SpewRate * delta;
         i32 spew_delta = static_cast<i32>(SpewFraction);

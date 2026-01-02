@@ -50,3 +50,22 @@ b32 mmCarSim::ShouldSkid()
 
 void mmCarSim::SetGlobalTuning(f32 /*arg1*/, f32 /*arg2*/)
 {}
+
+void mmCarSim::InitPtx()
+{
+    AsphaltRule.SetName("Asphalt");
+    ExplosionRule.SetName("Explosion");
+    OffroadRule.SetName("OffRoad");
+    SlushRule.SetName("Slush");
+    SnowRule.SetName("Snow");
+    WaterRule.SetName("Water");
+    SmokeRule.SetName("Smoke");
+
+    AsphaltRule.Load();
+    ExplosionRule.Load();
+    OffroadRule.Load();
+    SlushRule.Load();
+    SnowRule.Load();
+    WaterRule.Load();
+    SmokeRule.Load();
+}

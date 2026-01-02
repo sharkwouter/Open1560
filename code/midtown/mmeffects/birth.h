@@ -29,7 +29,7 @@ class asBirthRule final : public asNode
 {
 public:
     // ??0asBirthRule@@QAE@XZ
-    ARTS_IMPORT asBirthRule();
+    ARTS_EXPORT asBirthRule() = default;
 
     // ??1asBirthRule@@UAE@XZ | inline
     ARTS_EXPORT ~asBirthRule() override = default;
@@ -39,41 +39,37 @@ public:
     ARTS_IMPORT void AddWidgets(Bank* arg1) override;
 #endif
 
-    // ?GetClass@asBirthRule@@UAEPAVMetaClass@@XZ
-    ARTS_IMPORT MetaClass* GetClass() override;
-
     // ?InitSpark@asBirthRule@@QAEXPAUasSparkInfo@@PAUasSparkPos@@@Z
     ARTS_IMPORT void InitSpark(asSparkInfo* arg1, asSparkPos* arg2);
 
-    // ?DeclareFields@asBirthRule@@SAXXZ
-    ARTS_IMPORT static void DeclareFields();
+    VIRTUAL_META_DECLARE;
 
-    Vector3 Position;
-    Vector3 PositionVar;
-    Vector3 Velocity;
-    Vector3 VelocityVar;
-    f32 Life;
-    f32 LifeVar;
-    f32 Mass;
-    f32 MassVar;
-    f32 Radius;
-    f32 RadiusVar;
-    f32 DRadius;
-    f32 DRadiusVar;
-    f32 Drag;
-    f32 DragVar;
-    f32 Damp;
-    f32 DampVar;
-    f32 SpewRate;
-    f32 SpewRateLimit;
-    f32 Gravity;
-    i32 DAlpha;
-    i32 DAlphaVar;
-    i32 DRotation;
-    i32 DRotationVar;
-    i32 TexFrameStart;
-    i32 TexFrameEnd;
-    i32 InitialBlast;
+    Vector3 Position {};
+    Vector3 PositionVar {};
+    Vector3 Velocity {};
+    Vector3 VelocityVar {};
+    f32 Life {1.0f};
+    f32 LifeVar {};
+    f32 Mass {1.0f};
+    f32 MassVar {};
+    f32 Radius {1.0f};
+    f32 RadiusVar {};
+    f32 DRadius {};
+    f32 DRadiusVar {};
+    f32 Drag {};
+    f32 DragVar {};
+    f32 Damp {1.0f};
+    f32 DampVar {};
+    f32 SpewRate {};
+    f32 SpewTimeLimit {};
+    f32 Gravity {-9.8f};
+    i32 DAlpha {};
+    i32 DAlphaVar {};
+    i32 DRotation {};
+    i32 DRotationVar {};
+    i32 TexFrameStart {};
+    i32 TexFrameEnd {};
+    i32 InitialBlast {};
 
     enum BirthFlags_
     {
@@ -82,9 +78,9 @@ public:
         kSplashes = 0x8,
     };
 
-    i32 BirthFlags;
+    i32 BirthFlags {};
 
-    void (*InitCallback)(asSparkInfo*, asSparkPos*);
+    void (*InitCallback)(asSparkInfo*, asSparkPos*) {};
 };
 
 check_size(asBirthRule, 0xB0);

@@ -86,7 +86,7 @@ public:
     static void DeclareNamedTypedField(const char* name, usize offset, MetaType* type);
 
     // ?FindByName@MetaClass@@SAPAV1@PADPAV1@@Z
-    static MetaClass* FindByName(const char* name, MetaClass* root);
+    static MetaClass* FindByName(const char* name, MetaClass* root = &RootMetaClass);
 
     // ?UndeclareAll@MetaClass@@SAXXZ
     static void UndeclareAll();

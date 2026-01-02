@@ -104,7 +104,7 @@ public:
     ARTS_IMPORT void Init(char* arg1, mmCar* arg2, i32 arg3);
 
     // ?InitPtx@mmCarSim@@QAEXXZ
-    ARTS_IMPORT void InitPtx();
+    ARTS_EXPORT void InitPtx();
 
     // ?OnGround@mmCarSim@@QAEHXZ
     ARTS_IMPORT i32 OnGround();
@@ -284,15 +284,15 @@ public:
     Vector3 ExhaustSmokeOffset;
     f32 SlipPercentThresh;
     Callback OnPlayerImpact;
-    asParticles GrassPtx;
-    asParticles ExhaustPtx;
+    asParticles GrassParticles;
+    asParticles SmokeParticles;
     asBirthRule AsphaltRule;
     asBirthRule OffroadRule;
-    asBirthRule ExhaustRule;
+    asBirthRule SlushRule; // FIXME: Also used in UpdateExhaust!?
     asBirthRule SnowRule;
     asBirthRule WaterRule;
     asBirthRule SmokeRule;
-    asParticles ExplosionPtx;
+    asParticles ExplosionParticles;
     asBirthRule ExplosionRule;
     i32 Exploded;
     i32 field_1F08;
