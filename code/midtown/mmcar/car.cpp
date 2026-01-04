@@ -33,6 +33,8 @@ define_dummy_symbol(mmcar_car);
 
 static mem::cmd_param PARAM_aiphysics {"aiphysics"};
 
+ARTS_IMPORT extern f32 LastDamageFF;
+
 void mmCar::ApplyAiPhysics()
 {
     if (!Sim.FrontLeft.OnGround && !Sim.FrontRight.OnGround && !Sim.BackLeft.OnGround && !Sim.BackRight.OnGround)
@@ -226,6 +228,8 @@ void mmCar::Reset()
     FRSkid.Reset();
     BLSkid.Reset();
     BRSkid.Reset();
+
+    LastDamageFF = 0.0f;
 }
 
 void mmCar::StartSiren()

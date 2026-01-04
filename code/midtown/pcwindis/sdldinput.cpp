@@ -20,6 +20,9 @@
 
 #include <SDL3/SDL_gamepad.h>
 #include <SDL3/SDL_init.h>
+#include <SDL3/SDL_timer.h>
+
+#include <vector>
 
 static HRESULT DoFunctionNotImplemented(const char* name, usize times)
 {
@@ -35,18 +38,391 @@ static HRESULT DoFunctionNotImplemented(const char* name, usize times)
         return ++counter;                        \
     }());
 
-class SDL_DirectInputDevice2A_GamePad final : public IDirectInputDevice2A
+class ioRumbleEffect;
+
+class ioGamepad
 {
 public:
-    SDL_DirectInputDevice2A_GamePad(Ptr<SDL_Gamepad*[]> controllers)
-        : Controllers(std::move(controllers))
+    ioGamepad(std::vector<SDL_Gamepad*> gamepads)
+        : Gamepads(std::move(gamepads))
+    {
+        for (SDL_Gamepad* gamepad : Gamepads)
+        {
+            SDL_PropertiesID props = SDL_GetGamepadProperties(gamepad);
+
+            if (SDL_GetBooleanProperty(props, SDL_PROP_GAMEPAD_CAP_RUMBLE_BOOLEAN, false))
+                CanRumble = true;
+        }
+    }
+
+    ~ioGamepad()
+    {
+        for (SDL_Gamepad* gamepad : Gamepads)
+            SDL_CloseGamepad(gamepad);
+    }
+
+    void RegisterEffect(ioRumbleEffect* effect)
+    {
+        Effects.emplace_back(effect);
+    }
+
+    void UnregisterEffect(ioRumbleEffect* effect)
+    {
+        Effects.erase(std::remove(Effects.begin(), Effects.end(), effect), Effects.end());
+    }
+
+    SDL_Gamepad* Active() const
+    {
+        return Gamepads.front();
+    }
+
+    void Update();
+
+    std::vector<SDL_Gamepad*> Gamepads {};
+    std::vector<ioRumbleEffect*> Effects {};
+    bool CanRumble {};
+};
+
+static inline f32 lerp(f32 a, f32 b, f32 t)
+{
+    return (1 - t) * a + t * b;
+}
+
+class ioRumbleEffect
+{
+public:
+    static u64 Now()
+    {
+        return SDL_GetTicksNS() / 1000;
+    }
+
+    ioRumbleEffect(ioGamepad* owner)
+        : Owner(owner)
+    {
+        Owner->RegisterEffect(this);
+    }
+
+    virtual ~ioRumbleEffect() = 0
+    {
+        Owner->UnregisterEffect(this);
+    }
+
+    virtual void SetParameters(const DIEFFECT& params, DWORD dwFlags)
+    {
+        if (dwFlags & DIEP_DURATION)
+            Params.dwDuration = params.dwDuration;
+        if (dwFlags & DIEP_SAMPLEPERIOD)
+            Params.dwSamplePeriod = params.dwSamplePeriod;
+        if (dwFlags & DIEP_GAIN)
+            Params.dwGain = params.dwGain;
+        if (dwFlags & DIEP_TRIGGERBUTTON)
+            Params.dwTriggerButton = params.dwTriggerButton;
+        if (dwFlags & DIEP_TRIGGERREPEATINTERVAL)
+            Params.dwTriggerRepeatInterval = params.dwTriggerRepeatInterval;
+
+        if (dwFlags & DIEP_AXES)
+        {
+            // TODO: Copy the axes
+            // Params.cAxes = params.cAxes;
+            // Params.rgdwAxes = params.rgdwAxes;
+        }
+
+        if (dwFlags & DIEP_DIRECTION)
+        {
+            // TODO: Copy the directions
+            // Params.cAxes = params.cAxes;
+            // Params.rglDirection = params.rglDirection;
+            Params.dwFlags ^= (Params.dwFlags ^ params.dwFlags) & (DIEFF_CARTESIAN | DIEFF_POLAR | DIEFF_SPHERICAL);
+        }
+
+        if (dwFlags & DIEP_ENVELOPE)
+        {
+            if (params.lpEnvelope)
+            {
+                Envelope = *params.lpEnvelope;
+                Params.lpEnvelope = &Envelope;
+            }
+            else
+            {
+                Params.lpEnvelope = NULL;
+            }
+        }
+
+        // TODO: Handle DIEP_NORESTART | DIEP_NODOWNLOAD
+
+        if (dwFlags & DIEP_START)
+        {
+            Start(Now(), 1);
+        }
+    }
+
+    virtual f32 GetSustainLevel() const
+    {
+        return 1.0f;
+    }
+
+    virtual f32 Calculate(u32 now, u32 duration) = 0;
+
+    void Start(u64 now, u32 iters)
+    {
+        StartTime = now;
+        Iters = iters;
+    }
+
+    void Stop()
+    {
+        StartTime = 0;
+        Iters = 0;
+    }
+
+    f32 Update(u64 now)
+    {
+        while (Iters > 0)
+        {
+            u32 duration = Params.dwDuration;
+            u64 end = StartTime + duration;
+
+            if (now < end)
+            {
+                u32 here = static_cast<u32>(now - StartTime);
+                f32 level = Calculate(here, duration);
+                f32 gain = static_cast<f32>(Params.dwGain) / 10000.0f;
+                f32 sustain = GetSustainLevel();
+
+                if (Params.lpEnvelope)
+                {
+                    if (here < Envelope.dwAttackTime)
+                    {
+                        f32 attack = static_cast<f32>(Envelope.dwAttackLevel) / 10000.0f;
+                        sustain =
+                            lerp(attack, sustain, static_cast<f32>(here) / static_cast<f32>(Envelope.dwAttackTime));
+                    }
+                    else if (u32 fade_start = duration - Envelope.dwFadeTime; here >= fade_start)
+                    {
+                        f32 fade = static_cast<f32>(Envelope.dwFadeLevel) / 10000.0f;
+                        sustain = lerp(
+                            sustain, fade, static_cast<f32>(here - fade_start) / static_cast<f32>(Envelope.dwFadeTime));
+                    }
+                }
+
+                return level * gain * sustain;
+            }
+
+            StartTime = end;
+            --Iters;
+        }
+
+        return 0.0f;
+    }
+
+protected:
+    ioGamepad* Owner;
+    DIEFFECT Params {};
+    DIENVELOPE Envelope {};
+
+    u64 StartTime {};
+    u32 Iters {};
+};
+
+void ioGamepad::Update()
+{
+    SDL_UpdateGamepads();
+
+    for (usize i = 1; i < Gamepads.size(); ++i)
+    {
+        SDL_Gamepad* gamepad = Gamepads[i];
+
+        bool active = false;
+
+        for (int j = 0; j < SDL_GAMEPAD_BUTTON_COUNT; ++j)
+        {
+            if (SDL_GetGamepadButton(gamepad, static_cast<SDL_GamepadButton>(j)))
+            {
+                active = true;
+                break;
+            }
+        }
+
+        if (active)
+        {
+            SDL_RumbleGamepad(gamepad, 0, 0, 0);
+            std::swap(Gamepads[0], Gamepads[i]);
+            break;
+        }
+    }
+
+    if (CanRumble)
+    {
+        u64 now = ioRumbleEffect::Now();
+        f32 scale = 0.0f;
+
+        for (ioRumbleEffect* effect : Effects)
+            scale += effect->Update(now);
+
+        u16 rumble = static_cast<u16>(std::clamp(scale * 65535.0f, 0.0f, 65535.0f));
+
+        SDL_RumbleGamepad(Active(), rumble, rumble, rumble ? 1000 : 0);
+    }
+}
+
+class ioPeriodicRumbleEffect : public ioRumbleEffect
+{
+public:
+    using ioRumbleEffect::ioRumbleEffect;
+
+    virtual f32 CalculatePeriodic(f32 offset) = 0;
+
+    virtual f32 GetSustainLevel() const
+    {
+        return static_cast<f32>(Period.dwMagnitude) / 10000.0f;
+    }
+
+    f32 Calculate(u32 now, u32 /*duration*/) final override
+    {
+        now %= Period.dwPeriod;
+        now = (now * 36000) / Period.dwPeriod;
+        now = (now + Period.dwPhase) % 36000;
+        return CalculatePeriodic(static_cast<f32>(now) / 36000.0f);
+    }
+
+    void SetParameters(const DIEFFECT& params, DWORD dwFlags) override
+    {
+        if (dwFlags & DIEP_TYPESPECIFICPARAMS)
+        {
+            ArAssert(params.cbTypeSpecificParams == sizeof(DIPERIODIC), "Invalid effect");
+            Period = *(LPDIPERIODIC) params.lpvTypeSpecificParams;
+        }
+
+        ioRumbleEffect::SetParameters(params, dwFlags);
+    }
+
+private:
+    DIPERIODIC Period {};
+};
+
+class ioSquareRumbleEffect final : public ioPeriodicRumbleEffect
+{
+public:
+    using ioPeriodicRumbleEffect::ioPeriodicRumbleEffect;
+
+    f32 CalculatePeriodic(f32 /*offset*/) override
+    {
+        return 1.0f;
+    }
+};
+
+class ioSawtoothDownRumbleEffect final : public ioPeriodicRumbleEffect
+{
+public:
+    using ioPeriodicRumbleEffect::ioPeriodicRumbleEffect;
+
+    f32 CalculatePeriodic(f32 offset) override
+    {
+        return 1.0f - offset;
+    }
+};
+
+class ioRumbleEffect_DIEffect final : public IDirectInputEffect
+{
+public:
+    ioRumbleEffect_DIEffect(GUID guid, Ptr<ioRumbleEffect> effect)
+        : Guid(guid)
+        , Effect(std::move(effect))
     {}
 
-    ~SDL_DirectInputDevice2A_GamePad()
+    /*** IUnknown methods ***/
+    STDMETHOD(QueryInterface)(REFIID /*riid*/, LPVOID* /*ppvObj*/) override
     {
-        for (usize i = 0; Controllers[i]; ++i)
-            SDL_CloseGamepad(Controllers[i]);
+        return FunctionNotImplemented();
     }
+
+    STDMETHOD_(ULONG, AddRef)() override
+    {
+        return ++RefCount;
+    }
+
+    STDMETHOD_(ULONG, Release)() override
+    {
+        ULONG refs = --RefCount;
+
+        if (refs == 0)
+        {
+            ArWithStaticHeap static_heap;
+
+            delete this;
+        }
+
+        return refs;
+    }
+
+    /*** IDirectInputEffect methods ***/
+    STDMETHOD(Initialize)(HINSTANCE, DWORD, REFGUID)
+    {
+        return FunctionNotImplemented();
+    }
+
+    STDMETHOD(GetEffectGuid)(LPGUID pguid)
+    {
+        *pguid = Guid;
+        return DI_OK;
+    }
+
+    STDMETHOD(GetParameters)(LPDIEFFECT, DWORD)
+    {
+        return FunctionNotImplemented();
+    }
+
+    STDMETHOD(SetParameters)(LPCDIEFFECT peff, DWORD dwFlags)
+    {
+        Effect->SetParameters(*peff, dwFlags);
+        return DI_OK;
+    }
+
+    STDMETHOD(Start)(DWORD dwIterations, DWORD /*dwFlags*/)
+    {
+        Effect->Start(ioRumbleEffect::Now(), dwIterations);
+        return DI_OK;
+    }
+
+    STDMETHOD(Stop)()
+    {
+        Effect->Stop();
+
+        return DI_OK;
+    }
+
+    STDMETHOD(GetEffectStatus)(LPDWORD)
+    {
+        return FunctionNotImplemented();
+    }
+
+    STDMETHOD(Download)()
+    {
+        return FunctionNotImplemented();
+    }
+
+    STDMETHOD(Unload)()
+    {
+        return FunctionNotImplemented();
+    }
+
+    STDMETHOD(Escape)(LPDIEFFESCAPE)
+    {
+        return FunctionNotImplemented();
+    }
+
+private:
+    ULONG RefCount {1};
+    GUID Guid {};
+    Ptr<ioRumbleEffect> Effect {};
+};
+
+class ioGamepad_DIDevice2A final : public IDirectInputDevice2A
+{
+public:
+    ioGamepad_DIDevice2A(std::vector<SDL_Gamepad*> gamepads)
+        : Gamepad(std::move(gamepads))
+    {}
 
     /*** IUnknown methods ***/
     STDMETHOD(QueryInterface)(REFIID riid, LPVOID* ppvObj) override
@@ -87,13 +463,13 @@ public:
             return DIERR_INVALIDPARAM;
 
         *lpDIDevCaps = {sizeof(*lpDIDevCaps)};
-
-        lpDIDevCaps->dwFlags = 0; // TODO: Add DIDC_FORCEFEEDBACK support
         lpDIDevCaps->dwDevType = MAKEWORD(DIDEVTYPE_JOYSTICK, DIDEVTYPEJOYSTICK_GAMEPAD);
-
         lpDIDevCaps->dwAxes = 5;
         lpDIDevCaps->dwPOVs = 1;
         lpDIDevCaps->dwButtons = 10;
+
+        if (Gamepad.CanRumble)
+            lpDIDevCaps->dwFlags |= DIDC_FORCEFEEDBACK;
 
         return DI_OK;
     }
@@ -136,10 +512,10 @@ public:
 
         *state = {};
 
-        SDL_Gamepad* controller = GetActiveController();
+        SDL_Gamepad* gamepad = Gamepad.Active();
 
-        const auto get_axis = [controller](SDL_GamepadAxis axis, LONG min, LONG max) -> LONG {
-            return (((SDL_GetGamepadAxis(controller, axis) + 32768) * (max - min)) / 65535) + min;
+        const auto get_axis = [gamepad](SDL_GamepadAxis axis, LONG min, LONG max) -> LONG {
+            return (((SDL_GetGamepadAxis(gamepad, axis) + 32768) * (max - min)) / 65535) + min;
         };
 
         state->lX = get_axis(SDL_GAMEPAD_AXIS_LEFTX, -2000, 2000); // XAxis
@@ -151,8 +527,8 @@ public:
         state->lRx = get_axis(SDL_GAMEPAD_AXIS_RIGHTX, -2000, 2000); // UAxis
         state->lRy = get_axis(SDL_GAMEPAD_AXIS_RIGHTY, -2000, 2000); // VAxis
 
-        const auto get_button = [controller](SDL_GamepadButton button) -> Uint8 {
-            return SDL_GetGamepadButton(controller, button);
+        const auto get_button = [gamepad](SDL_GamepadButton button) -> Uint8 {
+            return SDL_GetGamepadButton(gamepad, button);
         };
 
         Uint8 dpad_py = get_button(SDL_GAMEPAD_BUTTON_DPAD_UP);
@@ -246,14 +622,47 @@ public:
     }
 
     /*** IDirectInputDevice2A methods ***/
-    STDMETHOD(CreateEffect)(REFGUID, LPCDIEFFECT, LPDIRECTINPUTEFFECT*, LPUNKNOWN) override
+    STDMETHOD(CreateEffect)(
+        REFGUID rguid, LPCDIEFFECT lpeff, LPDIRECTINPUTEFFECT* ppdeff, LPUNKNOWN /*punkOuter*/) override
     {
-        return FunctionNotImplemented();
+        ArWithStaticHeap static_heap;
+
+        *ppdeff = nullptr;
+
+        Ptr<ioRumbleEffect> effect;
+
+        if (rguid == GUID_Square)
+            effect = arnew ioSquareRumbleEffect(&Gamepad);
+        else if (rguid == GUID_SawtoothDown)
+            effect = arnew ioSawtoothDownRumbleEffect(&Gamepad);
+        else
+            return DIERR_INVALIDPARAM;
+
+        if (lpeff)
+        {
+            DWORD dwFlags = DIEP_ALLPARAMS;
+
+            if (!lpeff->lpvTypeSpecificParams)
+                dwFlags &= ~DIEP_TYPESPECIFICPARAMS;
+
+            effect->SetParameters(*lpeff, dwFlags);
+        }
+
+        *ppdeff = new ioRumbleEffect_DIEffect(rguid, std::move(effect));
+
+        return DI_OK;
     }
 
-    STDMETHOD(EnumEffects)(LPDIENUMEFFECTSCALLBACKA /*lpCallback*/, LPVOID /*pvRef*/, DWORD /*dwEffType*/) override
+    STDMETHOD(EnumEffects)(LPDIENUMEFFECTSCALLBACKA lpCallback, LPVOID pvRef, DWORD dwEffType) override
     {
-        return FunctionNotImplemented();
+        if (dwEffType == DIEFT_PERIODIC)
+        {
+            DIEFFECTINFOA effect {sizeof(effect), GUID_Square, DIEFT_PERIODIC, 0, 0, "Square"};
+            lpCallback(&effect, pvRef);
+            return DI_OK;
+        }
+
+        return DIERR_UNSUPPORTED;
     }
 
     STDMETHOD(GetEffectInfo)(LPDIEFFECTINFOA, REFGUID) override
@@ -283,30 +692,7 @@ public:
 
     STDMETHOD(Poll)() override
     {
-        SDL_UpdateGamepads();
-
-        // mmJoyMan::Init only supports one controller, so unify them and find the active one
-        for (usize i = 0; Controllers[i]; ++i)
-        {
-            SDL_Gamepad* controller = Controllers[i];
-
-            bool active = false;
-
-            for (int j = 0; j < SDL_GAMEPAD_BUTTON_COUNT; ++j)
-            {
-                if (SDL_GetGamepadButton(controller, static_cast<SDL_GamepadButton>(j)))
-                {
-                    active = true;
-                    break;
-                }
-            }
-
-            if (active)
-            {
-                std::swap(Controllers[0], Controllers[i]);
-                break;
-            }
-        }
+        Gamepad.Update();
 
         return DI_OK;
     }
@@ -318,19 +704,13 @@ public:
 
 private:
     ULONG RefCount {1};
-
-    Ptr<SDL_Gamepad*[]> Controllers {};
-
-    SDL_Gamepad* GetActiveController()
-    {
-        return Controllers[0];
-    }
+    ioGamepad Gamepad;
 };
 
-class SDL_DirectInput2A final : public IDirectInput2A
+class ioGamepad_DI2A final : public IDirectInput2A
 {
 public:
-    SDL_DirectInput2A()
+    ioGamepad_DI2A()
     {
         if (!SDL_WasInit(SDL_INIT_GAMEPAD))
             SDL_InitSubSystem(SDL_INIT_GAMEPAD);
@@ -378,22 +758,17 @@ public:
 
             if (num_gamepads > 0)
             {
-                Ptr<SDL_Gamepad*[]> gamepads = arnewa SDL_Gamepad* [num_gamepads + 1] {};
-                usize num_opened = 0;
+                std::vector<SDL_Gamepad*> gamepads;
 
                 for (int i = 0; i < num_gamepads; ++i)
                 {
-                    SDL_Gamepad* gamepad = SDL_OpenGamepad(gamepads_ids[i]);
-
-                    if (!gamepad)
-                        continue;
-
-                    gamepads[num_opened++] = gamepad;
+                    if (SDL_Gamepad* gamepad = SDL_OpenGamepad(gamepads_ids[i]))
+                        gamepads.push_back(gamepad);
                 }
 
-                if (num_opened)
+                if (!gamepads.empty())
                 {
-                    *lplpDirectInputDevice = new SDL_DirectInputDevice2A_GamePad(std::move(gamepads));
+                    *lplpDirectInputDevice = new ioGamepad_DIDevice2A(std::move(gamepads));
                     result = DI_OK;
                 }
             }
@@ -458,5 +833,5 @@ IDirectInputA* Create_SDL_IDirectInput2A()
 {
     ArWithStaticHeap static_heap;
 
-    return new SDL_DirectInput2A();
+    return new ioGamepad_DI2A();
 }
