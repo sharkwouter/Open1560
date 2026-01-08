@@ -59,13 +59,13 @@ public:
 private:
     f32 x_ {};
     f32 y_ {};
-    mmNumberFont* font_;
+    mmNumberFont* font_ {};
 
-#if ARTS_TARGET_BUILD < 1588
-    char gap2C[0x4]; // TODO: Remove this
+#ifndef ARTS_STANDALONE
+    char gap2C[0x4] {}; // TODO: Remove this
 #endif
 
-    char text_[80];
+    char text_[80] {};
 };
 
 check_size(mmNumber, 0x80);
@@ -95,8 +95,8 @@ private:
     usize Count {};
     agiBitmap** Bitmaps {};
 
-#if ARTS_TARGET_BUILD < 1588
-    char gap10[0x14]; // TODO: Remove this
+#ifndef ARTS_STANDALONE
+    char gap10[0x14] {}; // TODO: Remove this
 #endif
 
     void Init(u32 color);

@@ -30,7 +30,11 @@ struct PagerInfo_t;
 
 struct FileInfo
 {
-    char Path[(ARTS_TARGET_BUILD > 1560) ? ARTS_MAX_PATH : 256] {};
+#ifdef ARTS_STANDALONE
+    char Path[ARTS_MAX_PATH] {};
+#else
+    char Path[256] {};
+#endif
 
     b32 IsDirectory {};
 

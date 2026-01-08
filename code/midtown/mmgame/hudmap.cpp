@@ -24,13 +24,9 @@ define_dummy_symbol(mmgame_hudmap);
 #include "agi/pipeline.h"
 #include "mmcityinfo/state.h"
 
-#if ARTS_TARGET_BUILD < 1588
-agiBitmap* mmHudMap::Icon_Pink = nullptr;
-#endif
-
 mmHudMap::~mmHudMap()
 {
-#if ARTS_TARGET_BUILD < 1588
+#ifndef ARTS_STANDALONE
     if (Icon_Pink)
     {
         Icon_Pink->Release();
@@ -77,7 +73,7 @@ void mmHudMap::DrawOpponents()
             case 0xFFB400FF: bitmap = Icon_Purple; break;
             case 0xFF00FFFF: bitmap = Icon_Cyan; break;
             case 0xFFFF0390:
-#if ARTS_TARGET_BUILD < 1588
+#ifndef ARTS_STANDALONE
                 if (Icon_Pink == nullptr)
                 {
                     // TODO: Move to mmHudMap::Init
