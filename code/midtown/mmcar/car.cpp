@@ -359,7 +359,7 @@ void mmCar::Impact(mmIntersection* isect, Vector3* velocity, f32 energy, i32 aud
         if ((energy > 300.0f) && (Sim.CurrentDamage > Sim.MaxDamageScaled))
         {
             // TODO: Improve shard creation and create them even when not fully damaged.
-            Shards.EmitShards(isect->Position, energy, abs_deflection); 
+            Shards.EmitShards(isect->Position, energy, abs_deflection);
             Model.Impact(&where);
         }
 
