@@ -48,6 +48,44 @@ class UIToggleButton2;
 class UIToggleButton;
 class UIVScrollBar;
 
+enum
+{
+    IDM_MAIN = 1,
+    IDM_OPTIONS = 2,
+    IDM_AUDIO = 3,
+    IDM_GRAPHICS = 4,
+    IDM_CONTROLS = 5,
+    IDM_DRIVER = 6,
+    IDM_RACE = 7,
+    IDM_VEHICLE = 8,
+    IDM_SHOWCASE = 9,
+    IDM_NET_SELECT = 10,
+    IDM_HOST_RACE = 11,
+    IDM_NET_ARENA = 12,
+    IDM_CNR = 13,
+    IDD_TCP = 14,
+    IDD_SERIAL = 16,
+    IDD_NEWP = 17,
+    IDD_RETRIEVE = 18,
+    IDD_DREC = 19,
+    IDD_HOFF = 20,
+    IDD_CTRL = 21,
+    IDD_RENV = 22,
+    IDD_LOCKED = 23,
+    IDD_BADPASS = 24,
+    IDD_PASSWORD = 25,
+    IDD_ZONE = 26,
+    IDD_QUIT = 27,
+    IDD_DELP = 28,
+    IDD_DUPP = 29,
+    IDD_LASTP = 30,
+    IDD_ODEF = 31,
+    IDD_XASSIGN = 32,
+    IDD_PLIM = 33,
+    IDM_ABOUT = 34,
+    IDD_CENV = 35,
+};
+
 class UIMenu : public asNode
 {
 public:

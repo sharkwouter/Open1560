@@ -125,11 +125,10 @@ void UIMenu::AddWidget(uiWidget* widget, aconst char* label, f32 x, f32 y, f32 w
     ++widget_count_;
 
     // Try and maintain a top-to-bottom order so widgets are navigated in a sane way
+    // TODO: Add a function to override the ordering
     std::sort(&widgets_[0], &widgets_[widget_count_], [](uiWidget* lhs, uiWidget* rhs) {
-        if (lhs->MaxY < rhs->MinY)
-            return true;
-        if (lhs->MinY > rhs->MaxY)
-            return false;
+        if (f32 delta = lhs->Y - rhs->Y; std::abs(delta) > 0.005f)
+            return delta < 0.0f;
         return lhs->X < rhs->X;
     });
 
