@@ -24,6 +24,7 @@
 #include "data7/utimer.h"
 #include "eventq7/active.h"
 #include "pcwindis/setupdata.h"
+#include "stream/fsystem.h"
 #include "stream/stream.h"
 
 #include "glcontext.h"
@@ -124,6 +125,35 @@ static u32 CompileShader(u32 type, i32 glsl_version, const char* src)
     CheckShader(shader);
 
     return shader;
+}
+
+static ConstString LoadShader(u32 type, const char* name)
+{
+    const char* ext = nullptr;
+    const char* desc = nullptr;
+
+    switch (type)
+    {
+        case GL_VERTEX_SHADER:
+            ext = ".vs";
+            desc = "Vertex Shader";
+            break;
+        case GL_FRAGMENT_SHADER:
+            ext = ".fs";
+            desc = "Fragment Shader";
+            break;
+
+        default: Quitf("Invalid Shader Type %u", type);
+    }
+
+    Ptr<Stream> input = OpenFile(name, "glsl", ext, 0, desc);
+    ArAssert(input, "Failed to open shader");
+
+    isize size = static_cast<isize>(input->Size());
+    ConstString result {static_cast<usize>(size) + 1};
+    ArAssert(input->Read(result.get(), size) == size, "Failed to read shader");
+    result[size] = '\0';
+    return result;
 }
 
 agiGLRasterizer::agiGLRasterizer(agiPipeline* pipe)
@@ -428,99 +458,11 @@ void agiGLRasterizer::InitModern()
 
     Displayf("OpenGL: Using shader version %i", glsl_version);
 
-    u32 vs = CompileShader(GL_VERTEX_SHADER, glsl_version, R"(
-in vec4 in_Position;
-in vec4 in_Color;
-in vec4 in_Specular;
-in vec2 in_UV;
-
-out vec4 frag_Color;
-out vec4 frag_Fog;
-out vec2 frag_UV;
-
-uniform vec4 u_Transform[2];
-uniform vec4 u_FogMode;
-uniform vec3 u_FogColor;
-uniform bvec2 u_TexEnv;
-uniform vec2 u_RenderScale;
-
-#if __VERSION__ < 130
-#define round(x) floor((x) + 0.5)
-#endif
-
-void main()
-{
-    vec4 pos = in_Position;
-
-    // If the vertex has no perspective, assume it is 2D and tweak the resolution scaling
-    if (pos.w == 1.0) {
-        // Instead of allowing the position to be scaled linearly from virtual
-        // to physical screen coordinates, find the group of physical pixels
-        // which can can contain the virtual pixel, and then interpolate
-        // between them. This ensures integral positions do not become
-        // fractional, which would cause minor rendering issues.
-        vec2 a = floor(pos.xy);
-        vec2 b = a * u_RenderScale;
-        pos.xy = mix(round(b), round(b + u_RenderScale), pos.xy - a) / u_RenderScale;
-    }
-
-    gl_Position = pos * u_Transform[0] + u_Transform[1];
-    gl_Position /= pos.w;
-    frag_Color = u_TexEnv[0] ? in_Color.bgra : vec4(1.0);
-
-    frag_Fog = vec4(0.0);
-    frag_UV = in_UV;
-
-    if (u_FogMode[0] != 0.0)
-    {
-        float fog;
-
-        if (u_FogMode[0] == 1.0) // Pixel
-        {
-            float depth = in_Position.z * gl_Position.w;
-            // clamping in the vertex shader assumes assumes Z is pre-clipped
-            fog = clamp(depth * u_FogMode[1] + u_FogMode[2], 0.0, 1.0);
-        }
-        else // Vertex
-        {
-            fog = in_Specular.a;
-        }
-
-        frag_Fog.rgb = u_FogColor * (1.0 - fog);
-        frag_Color.rgb *= fog;
-    }
-}
-)");
-
-    u32 fs = CompileShader(GL_FRAGMENT_SHADER, glsl_version, R"(
-in vec4 frag_Color;
-in vec4 frag_Fog;
-in vec2 frag_UV;
-
-#if __VERSION__ >= 130
-out vec4 out_Color;
-#else
-#define out_Color gl_FragColor
-#endif
-
-uniform sampler2D u_Texture;
-uniform float u_AlphaRef;
-uniform bvec2 u_TexEnv;
-
-void main()
-{
-    out_Color = frag_Color;
-
-    if (u_TexEnv[1])
-        out_Color *= texture2D(u_Texture, frag_UV);
-
-    out_Color += frag_Fog;
-
-    // Ignored by software renderer, only used by mmDashView, only ever 0
-    if (out_Color.a <= u_AlphaRef)
-        discard;
-}
-)");
+    const char* shader_name = "main";
+    ConstString vs_src = LoadShader(GL_VERTEX_SHADER, shader_name);
+    ConstString fs_src = LoadShader(GL_FRAGMENT_SHADER, shader_name);
+    u32 vs = CompileShader(GL_VERTEX_SHADER, glsl_version, vs_src.get());
+    u32 fs = CompileShader(GL_FRAGMENT_SHADER, glsl_version, fs_src.get());
 
     shader_ = glCreateProgram();
 

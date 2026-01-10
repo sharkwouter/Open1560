@@ -453,6 +453,19 @@ static void MainPhase(i32 argc, char** argv)
     InitEventQueue();
 
     {
+        ARTS_MEM_STAT("ARTS Early Init");
+
+        /*ARTSPTR = */ new asSimulation();
+        Sim()->EarlyInit("."_xconst, argc, argv);
+
+        if (!GBArgs['f'])
+            Sim()->SetDebug(false);
+
+        if (!VFS)
+            LoadArchives(ar_path);
+    }
+
+    {
         ARTS_MEM_STAT("AGI Startup");
 
         if (InitPipeline(APPTITLE, argc, argv))
@@ -471,19 +484,8 @@ static void MainPhase(i32 argc, char** argv)
 
     {
         ARTS_MEM_STAT("ARTS Init");
-
-        /*ARTSPTR = */ new asSimulation();
-        Sim()->Init("."_xconst, argc, argv);
-
-        if (!VFS)
-        {
-            LoadArchives(ar_path);
-            agiPhysLib.Load("mtl/physics.db");
-        }
+        Sim()->Init();
     }
-
-    if (!GBArgs['f'])
-        Sim()->SetDebug(false);
 
     {
         ARTS_MEM_STAT("Audio manager");

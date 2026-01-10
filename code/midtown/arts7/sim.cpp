@@ -208,7 +208,7 @@ asSimulation::~asSimulation()
     }
 }
 
-void asSimulation::Init(aconst char* proj_path, i32 argc, char** argv)
+void asSimulation::EarlyInit(aconst char* proj_path, i32 argc, char** argv)
 {
     seconds_ = 4321.0f;
 
@@ -326,7 +326,10 @@ void asSimulation::Init(aconst char* proj_path, i32 argc, char** argv)
     HierPrefix = ProjPath;
 
     arts_sprintf(ExecPath, "%s\\bin\\", proj_path);
+}
 
+void asSimulation::Init()
+{
     CheckLibraries();
 
     agiMtlLib.Init(0);
@@ -334,9 +337,7 @@ void asSimulation::Init(aconst char* proj_path, i32 argc, char** argv)
     agiPhysLib.Load("mtl/physics.db");
 
     if (!CULLMGR)
-    {
         CULLMGR = new asCullManager(1024, 128);
-    }
 
     SunParams.SetPosition({1000.0f, 1000.0f, 1000.0f});
     SunLight = as_raw Pipe()->CreateLight();

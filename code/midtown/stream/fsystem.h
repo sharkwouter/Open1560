@@ -128,5 +128,7 @@ ARTS_EXPORT [[deprecated]] Owner<Stream> OpenFile(
 Owner<Stream> OpenFile(const char* file, const char* folder, const char* ext, i32 ext_id, char* buffer,
     isize buffer_len, const char* desc);
 
+Ptr<Stream> OpenFile(const char* file, const char* folder, const char* ext, i32 ext_id, const char* desc);
+
 // ?fsVerbose@@3HA
 ARTS_EXPORT extern b32 fsVerbose;

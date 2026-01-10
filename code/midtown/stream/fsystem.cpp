@@ -315,3 +315,8 @@ Owner<Stream> OpenFile(
 
     return as_owner result;
 }
+
+Ptr<Stream> OpenFile(const char* file, const char* folder, const char* ext, i32 ext_id, const char* desc)
+{
+    return as_ptr OpenFile(file, folder, ext, ext_id, nullptr, 0, desc);
+}
