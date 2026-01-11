@@ -289,12 +289,12 @@ void MenuManager::RegisterWidgetFocus(b32 focused, f32 x, f32 y, f32 w, f32 h, u
     if (!focused || w == 0.0)
     {
         focused_widget_ = nullptr;
-        has_active_widget_ = false;
+        has_focused_widget_ = false;
     }
     else
     {
         uiWidget* active = active_widget_;
-        has_active_widget_ = true;
+        has_focused_widget_ = true;
         focused_widget_ = widget;
 
         active->MinX = x;

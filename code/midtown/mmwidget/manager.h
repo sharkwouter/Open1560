@@ -225,9 +225,19 @@ public:
         return field_D0;
     }
 
-    bool HasActiveWidget() const
+    bool HasFocusedWidget() const
     {
-        return has_active_widget_ == 1;
+        return has_focused_widget_ == 1;
+    }
+
+    uiWidget* GetFocusedWidget()
+    {
+        return focused_widget_;
+    }
+
+    UITextField* GetActiveImeField()
+    {
+        return active_ime_field_;
     }
 
     void SetActiveImeField(UITextField* field)
@@ -260,6 +270,16 @@ public:
         return dialog_menu_;
     }
 
+    uiWidget* GetActiveWidget()
+    {
+        return active_widget_;
+    }
+
+    asCamera* GetCamera()
+    {
+        return menu_camera_.get();
+    }
+
 private:
     // ?PlayMenuSwitchSound@MenuManager@@AAEXXZ
     ARTS_IMPORT void PlayMenuSwitchSound();
@@ -273,7 +293,7 @@ private:
     Ptr<asLinearCS[]> lcss_;
     Ptr<uiNavBar> nav_bar_;
     i32 field_38;
-    i32 has_active_widget_; // TODO: Rename has_focused_widget_ ?
+    i32 has_focused_widget_;
     b32 is_3D_;
     b32 is_popup_open_;
     uiWidget* focused_widget_;

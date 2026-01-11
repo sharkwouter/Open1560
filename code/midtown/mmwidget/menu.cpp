@@ -21,19 +21,32 @@ define_dummy_symbol(mmwidget_menu);
 #include "menu.h"
 
 #include "agi/pipeline.h"
+#include "arts7/camera.h"
 #include "arts7/midgets.h"
 #include "eventq7/keys.h"
 #include "pcwindis/dxinit.h"
 
 #include "manager.h"
+#include "textfield.h"
 #include "widget.h"
 
 #include <algorithm>
 
 #include <SDL3/SDL_keyboard.h>
 
+void UIMenu::PreSetup()
+{
+    if (!MenuMgr()->Is3D())
+        MenuMgr()->GetCamera()->SetViewport(0.0f, 0.0f, 1.0f, 1.0f, 1);
+}
+
 void UIMenu::PostSetup()
 {}
+
+void UIMenu::BackUp()
+{
+    state_ = MENU_STATE_1;
+}
 
 void UIMenu::CheckInput()
 {
@@ -97,11 +110,6 @@ void UIMenu::CheckInput()
     }
 }
 
-i32 UIMenu::IsAnOptionMenu()
-{
-    return 0;
-}
-
 void UIMenu::AddWidget(uiWidget* widget, aconst char* label, f32 x, f32 y, f32 w, f32 h, i32 id, aconst char* icon)
 {
     widget->X = x;
@@ -142,9 +150,20 @@ void UIMenu::AssignBackground(aconst char* background_name)
     background_name_ = background_name;
 }
 
+void UIMenu::AssignName(LocString* name)
+{
+    menu_name_ = name->Text;
+}
+
 void UIMenu::ClearAction()
 {
-    state_ = 2;
+    state_ = MENU_STATE_2;
+}
+
+void UIMenu::ClearSelected()
+{
+    if (widget_count_ > 0 && !MenuMgr()->HasFocusedWidget())
+        GetActiveWidget()->Switch(false);
 }
 
 void UIMenu::GetDimensions(f32& x, f32& y, f32& w, f32& h)
@@ -171,6 +190,54 @@ b32 UIMenu::Increment()
     return true;
 }
 
+void UIMenu::KeyboardAction(eqEvent event)
+{
+    if (!IsNodeActive())
+        return;
+
+    if (MenuMgr()->HasFocusedWidget())
+    {
+        MenuMgr()->GetFocusedWidget()->CaptureAction(event);
+        MenuMgr()->GetActiveWidget()->MouseHit = false;
+    }
+    else
+    {
+        GetActiveWidget()->Action(event);
+
+        if (event.Key.Key == EQ_VK_RETURN)
+            widget_id_ = GetActiveWidget()->WidgetID;
+    }
+}
+
+void UIMenu::MouseAction(eqEvent event)
+{
+    if (GetActiveWidget() != MenuMgr()->GetActiveImeField())
+    {
+        DisableIME();
+        MenuMgr()->SetActiveImeField(nullptr);
+    }
+
+    GetActiveWidget()->Action(event);
+    GetActiveWidget()->ResetToolTip();
+}
+
+void UIMenu::ClearToolTip()
+{
+    for (i32 i = 0; i < widget_count_; ++i)
+        widgets_[i]->ResetToolTip();
+}
+
+void UIMenu::ClearWidgets()
+{
+    for (i32 i = 0; i < widget_count_; ++i)
+    {
+        uiWidget* widget = widgets_[i];
+
+        if (widget->Active)
+            widget->Switch(false);
+    }
+}
+
 b32 UIMenu::Decrement()
 {
     DisableIME();
@@ -185,6 +252,14 @@ b32 UIMenu::Decrement()
     }
 
     return true;
+}
+
+void UIMenu::Disable()
+{
+    DeactivateNode();
+    enabled_ = false;
+    state_ = MENU_STATE_3;
+    PostSetup();
 }
 
 void UIMenu::ScaleWidget(f32& x, f32& y, f32& w, f32& h)
@@ -269,6 +344,23 @@ void UIMenu::DisableIME()
     }
 }
 
+void UIMenu::Enable()
+{
+    ActivateNode();
+    enabled_ = true;
+    field_74 = 1;
+    field_88 = 0;
+    state_ = MENU_STATE_2;
+    PreSetup();
+    SetBstate(focus_widget_index_);
+
+    if (widget_count_ && !MenuMgr()->Is3D())
+    {
+        GetWidget(focus_widget_index_)->Update();
+        GetWidget(focus_widget_index_)->Switch(true);
+    }
+}
+
 i32 UIMenu::FindTheFirstFocusWidget()
 {
     return FindFocusWidget(0, 1);
@@ -276,12 +368,14 @@ i32 UIMenu::FindTheFirstFocusWidget()
 
 i32 UIMenu::FindTheNextFocusWidget()
 {
-    return FindFocusWidget(*p_b_state_ + 1, 1);
+    i32 active = *p_b_state_;
+    return FindFocusWidget(active + (GetWidget(active)->Active ? 1 : 0), 1);
 }
 
 i32 UIMenu::FindThePrevFocusWidget()
 {
-    return FindFocusWidget(*p_b_state_ - 1, -1);
+    i32 active = *p_b_state_;
+    return FindFocusWidget(active - (GetWidget(active)->Active ? 1 : 0), -1);
 }
 
 i32 UIMenu::FindTheLastFocusWidget()

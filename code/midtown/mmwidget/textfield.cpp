@@ -32,7 +32,7 @@ define_dummy_symbol(mmwidget_textfield);
 
 void UITextField::ToggleField(i32 state)
 {
-    if (MenuMgr()->HasActiveWidget() && (state == 0) && (LocString513 == 1))
+    if (MenuMgr()->HasFocusedWidget() && (state == 0) && (LocString513 == 1))
         MenuMgr()->RegisterWidgetFocus(0, X, Y, Width, Height, this);
 
     if (state == -1)

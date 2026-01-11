@@ -41,7 +41,10 @@ public:
     ARTS_EXPORT virtual void StoreCurrentSetup();
 
     // ?IsAnOptionMenu@OptionsBase@@UAEHXZ | inline
-    ARTS_IMPORT i32 IsAnOptionMenu() override;
+    ARTS_EXPORT b32 IsAnOptionMenu() override
+    {
+        return true;
+    }
 
     u8 field_90[8];
     mmPlayerConfig Config;

@@ -102,19 +102,22 @@ public:
     ARTS_IMPORT ~UIMenu() override;
 
     // ?PreSetup@UIMenu@@UAEXXZ
-    ARTS_IMPORT virtual void PreSetup();
+    ARTS_EXPORT virtual void PreSetup();
 
     // ?PostSetup@UIMenu@@UAEXXZ
     ARTS_EXPORT virtual void PostSetup();
 
     // ?BackUp@UIMenu@@UAEXXZ
-    ARTS_IMPORT virtual void BackUp();
+    ARTS_EXPORT virtual void BackUp();
 
     // ?CheckInput@UIMenu@@UAEXXZ
     ARTS_EXPORT virtual void CheckInput();
 
     // ?IsAnOptionMenu@UIMenu@@UAEHXZ | inline
-    ARTS_EXPORT virtual i32 IsAnOptionMenu();
+    ARTS_EXPORT virtual b32 IsAnOptionMenu()
+    {
+        return false;
+    }
 
     // ?AddBMButton@UIMenu@@QAEPAVUIBMButton@@HPADMMHVCallback@@PAHHH1@Z
     ARTS_IMPORT UIBMButton* AddBMButton(i32 idc, aconst char* name, f32 x, f32 y, i32 type, Callback cb_1 = nullptr,
@@ -197,7 +200,7 @@ public:
     ARTS_EXPORT void AssignBackground(aconst char* background_name);
 
     // ?AssignName@UIMenu@@QAEXPAULocString@@@Z
-    ARTS_IMPORT void AssignName(LocString* arg1);
+    ARTS_EXPORT void AssignName(LocString* name);
 
     // ?CheckMouseHits@UIMenu@@QAEXXZ
     ARTS_IMPORT void CheckMouseHits();
@@ -206,25 +209,25 @@ public:
     ARTS_EXPORT void ClearAction();
 
     // ?ClearSelected@UIMenu@@QAEXXZ
-    ARTS_IMPORT void ClearSelected();
+    ARTS_EXPORT void ClearSelected();
 
     // ?ClearToolTip@UIMenu@@QAEXXZ
-    ARTS_IMPORT void ClearToolTip();
+    ARTS_EXPORT void ClearToolTip();
 
     // ?ClearWidgets@UIMenu@@QAEXXZ
-    ARTS_IMPORT void ClearWidgets();
+    ARTS_EXPORT void ClearWidgets();
 
     // ?Decrement@UIMenu@@QAEHXZ
     ARTS_EXPORT b32 Decrement();
 
     // ?Disable@UIMenu@@QAEXXZ
-    ARTS_IMPORT void Disable();
+    ARTS_EXPORT void Disable();
 
     // ?DisableIME@UIMenu@@QAEXXZ
-    ARTS_EXPORT void DisableIME();
+    void DisableIME();
 
     // ?Enable@UIMenu@@QAEXXZ
-    ARTS_IMPORT void Enable();
+    ARTS_EXPORT void Enable();
 
     // ?FindTheFirstFocusWidget@UIMenu@@QAEHXZ
     i32 FindTheFirstFocusWidget();
@@ -234,22 +237,28 @@ public:
     i32 FindFocusWidget(i32 start, i32 step);
 
     // ?GetBstate@UIMenu@@QAEHXZ
-    ARTS_IMPORT i32 GetBstate();
+    i32 GetBstate()
+    {
+        return *p_b_state_;
+    }
 
     // ?GetDimensions@UIMenu@@QAEXAAM000@Z
     ARTS_EXPORT void GetDimensions(f32& x, f32& y, f32& w, f32& h);
 
     // ?GetWidgetID@UIMenu@@QAEHXZ
-    ARTS_IMPORT i32 GetWidgetID();
+    ARTS_EXPORT i32 GetWidgetID()
+    {
+        return widget_id_;
+    }
 
     // ?Increment@UIMenu@@QAEHXZ
     ARTS_EXPORT b32 Increment();
 
     // ?KeyboardAction@UIMenu@@QAEXTeqEvent@@@Z
-    ARTS_IMPORT void KeyboardAction(eqEvent arg1);
+    void KeyboardAction(eqEvent event);
 
     // ?MouseAction@UIMenu@@QAEXTeqEvent@@@Z
-    ARTS_IMPORT void MouseAction(eqEvent arg1);
+    ARTS_EXPORT void MouseAction(eqEvent event);
 
     // ?MouseHitCheck@UIMenu@@QAEPAVuiWidget@@HMM@Z
     ARTS_IMPORT uiWidget* MouseHitCheck(i32 arg1, f32 arg2, f32 arg3);
@@ -331,6 +340,13 @@ public:
     }
 
 protected:
+    enum
+    {
+        MENU_STATE_1 = 1,
+        MENU_STATE_2 = 2,
+        MENU_STATE_3 = 3,
+    };
+
     i32 action_source_;
     i32 state_;
     i32 enabled_;
@@ -353,9 +369,9 @@ protected:
     i32* p_b_state_;
     i32 b_state_;
     i32 field_74;
-    i32 field_78;
+    i32 widget_id_;
     i32 prev_menu_id_;
-    i32 active_widget_id_;
+    i32 focus_widget_index_;
     f32 field_84;
     i32 field_88;
     ConstString background_name_;
