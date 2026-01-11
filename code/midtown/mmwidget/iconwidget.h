@@ -36,7 +36,7 @@ public:
     ARTS_IMPORT void Init(LocString* arg1, char* arg2, f32 arg3, f32 arg4, f32 arg5, f32 arg6, Callback arg7);
 
     // ?Switch@UIIconW@@UAEXH@Z
-    ARTS_IMPORT void Switch(i32 arg1) override;
+    ARTS_IMPORT void Switch(b32 arg1) override;
 
     // ?Update@UIIconW@@UAEXXZ
     ARTS_IMPORT void Update() override;

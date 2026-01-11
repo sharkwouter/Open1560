@@ -42,7 +42,7 @@ public:
     ARTS_IMPORT void SetText(LocString* arg1);
 
     // ?Switch@UILabel@@UAEXH@Z
-    ARTS_EXPORT void Switch(i32 arg1) override;
+    ARTS_EXPORT void Switch(b32 arg1) override;
 
     // ?SwitchState@UILabel@@QAEXH@Z
     ARTS_IMPORT void SwitchState(i32 arg1);

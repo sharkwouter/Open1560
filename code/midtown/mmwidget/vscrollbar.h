@@ -76,7 +76,7 @@ public:
     ARTS_IMPORT void SetTrough(f32 arg1, f32 arg2);
 
     // ?Switch@UIVScrollBar@@UAEXH@Z
-    ARTS_IMPORT void Switch(i32 arg1) override;
+    ARTS_IMPORT void Switch(b32 arg1) override;
 
     // ?Update@UIVScrollBar@@UAEXXZ
     ARTS_IMPORT void Update() override;

@@ -556,6 +556,7 @@ static void MainPhase(i32 argc, char** argv)
                 mm_interface = arnew mmInterface();
                 Sim()->AddChild(mm_interface.get());
 
+                mm_interface->SetNavigationOrders();
                 mm_interface->Reset();
                 mm_interface->ShowMain(CycleState);
 

@@ -47,7 +47,7 @@ public:
     ARTS_IMPORT void SetPosition(f32 arg1, f32 arg2, f32 arg3, f32 arg4);
 
     // ?Switch@UIControlWidget@@UAEXH@Z
-    ARTS_IMPORT void Switch(i32 arg1) override;
+    ARTS_IMPORT void Switch(b32 arg1) override;
 
     // ?TurnOff@UIControlWidget@@UAEXXZ | inline
     ARTS_IMPORT void TurnOff() override;

@@ -104,7 +104,7 @@ public:
     ARTS_IMPORT void EnablePU();
 
     // ?FindMenu@MenuManager@@QAEHH@Z
-    ARTS_IMPORT i32 FindMenu(i32 arg1);
+    ARTS_IMPORT i32 FindMenu(i32 idm);
 
     // ?Flush@MenuManager@@QAEXXZ
     ARTS_IMPORT void Flush();
@@ -197,7 +197,7 @@ public:
     ARTS_IMPORT void SwitchFocus(UIMenu* arg1);
 
     // ?ToggleFocus@MenuManager@@QAEXH@Z
-    ARTS_IMPORT void ToggleFocus(i32 arg1);
+    ARTS_EXPORT void ToggleFocus(i32 direction);
 
     // ?Update@MenuManager@@UAEXXZ
     ARTS_EXPORT void Update() override;
@@ -243,6 +243,21 @@ public:
     uiNavBar* GetNavBar()
     {
         return nav_bar_.get();
+    }
+
+    UIMenu* GetMenuAt(i32 index)
+    {
+        return (index >= 0) ? menus_[index] : nullptr;
+    }
+
+    UIMenu* GetMenu(i32 idm)
+    {
+        return GetMenuAt(FindMenu(idm));
+    }
+
+    UIMenu* GetDialogMenu()
+    {
+        return dialog_menu_;
     }
 
 private:

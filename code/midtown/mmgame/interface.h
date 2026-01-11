@@ -115,6 +115,8 @@ public:
     // ?UpdateLobby@mmInterface@@QAEXXZ
     ARTS_IMPORT void UpdateLobby();
 
+    void SetNavigationOrders();
+
     // ?DeclareFields@mmInterface@@SAXXZ
     ARTS_IMPORT static void DeclareFields();
 

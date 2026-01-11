@@ -28,7 +28,7 @@ void uiWidget::Action(eqEvent /*arg1*/)
 void uiWidget::CaptureAction(eqEvent /*arg1*/)
 {}
 
-void uiWidget::Switch(i32 /*arg1*/)
+void uiWidget::Switch(b32 /*arg1*/)
 {}
 
 void uiWidget::EvalMouseX(f32 /*arg1*/)

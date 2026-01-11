@@ -69,7 +69,7 @@ public:
     ARTS_IMPORT void SetVScrollVals();
 
     // ?Switch@UICWArray@@UAEXH@Z
-    ARTS_IMPORT void Switch(i32 arg1) override;
+    ARTS_IMPORT void Switch(b32 arg1) override;
 
     // ?Update@UICWArray@@UAEXXZ
     ARTS_IMPORT void Update() override;

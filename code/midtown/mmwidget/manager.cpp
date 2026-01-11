@@ -109,6 +109,24 @@ i32 MenuManager::Switch(i32 id)
     return id;
 }
 
+void MenuManager::ToggleFocus(i32 direction)
+{
+    UIMenu* focus = nav_bar_.get();
+
+    if (active_menu_ == focus || !focus || !focus->IsNodeActive())
+        focus = GetCurrentMenu();
+
+    if (focus)
+        SetFocus(focus);
+
+    focus = active_menu_;
+
+    if (direction == 0)
+        focus->FindTheFirstFocusWidget();
+    else if (direction == -1)
+        focus->FindTheLastFocusWidget();
+}
+
 void MenuManager::Update()
 {
     ForceCurrentFocus();

@@ -85,7 +85,7 @@ public:
     ARTS_IMPORT void SetPosition(f32 arg1, f32 arg2) override;
 
     // ?Switch@UIBMButton@@UAEXH@Z
-    ARTS_IMPORT void Switch(i32 arg1) override;
+    ARTS_IMPORT void Switch(b32 arg1) override;
 
     // ?Unkill@UIBMButton@@QAEXXZ
     ARTS_IMPORT void Unkill();

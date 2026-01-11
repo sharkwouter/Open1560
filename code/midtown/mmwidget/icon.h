@@ -47,7 +47,7 @@ public:
     ARTS_IMPORT void LoadBitmap(char* arg1);
 
     // ?Switch@UIIcon@@UAEXH@Z
-    ARTS_IMPORT void Switch(i32 arg1) override;
+    ARTS_IMPORT void Switch(b32 arg1) override;
 
     // ?Update@UIIcon@@UAEXXZ
     ARTS_IMPORT void Update() override;

@@ -57,7 +57,7 @@ public:
     ARTS_EXPORT virtual void CaptureAction(eqEvent arg1);
 
     // ?Switch@uiWidget@@UAEXH@Z
-    ARTS_EXPORT virtual void Switch(i32 arg1);
+    ARTS_EXPORT virtual void Switch(b32 arg1);
 
     // ?EvalMouseX@uiWidget@@UAEXM@Z | inline
     ARTS_EXPORT virtual void EvalMouseX(f32 arg1);

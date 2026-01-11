@@ -55,7 +55,7 @@ public:
     ARTS_IMPORT void SetVScrollVals();
 
     // ?Switch@UITextScroll@@UAEXH@Z
-    ARTS_IMPORT void Switch(i32 arg1) override;
+    ARTS_IMPORT void Switch(b32 arg1) override;
 
     // ?VScrollCB@UITextScroll@@QAEXXZ
     ARTS_IMPORT void VScrollCB();

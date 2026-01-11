@@ -64,7 +64,7 @@ public:
     ARTS_IMPORT f32 SetValue(f32 arg1);
 
     // ?Switch@UISlider@@UAEXH@Z
-    ARTS_IMPORT void Switch(i32 arg1) override;
+    ARTS_IMPORT void Switch(b32 arg1) override;
 
     // ?TestHit@UISlider@@QAEHMM@Z | unused
     i32 TestHit(f32 arg1, f32 arg2);

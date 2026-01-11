@@ -528,7 +528,7 @@
 #define MM_IDS_509 509
 #define MM_IDS_510 510
 #define MM_IDS_511 511
-#define MM_IDS_512 512
+#define MM_IDS_NAVIGATION_BAR 512
 #define MM_IDS_513 513
 #define MM_IDS_514 514
 #define MM_IDS_515 515

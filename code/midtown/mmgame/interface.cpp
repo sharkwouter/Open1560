@@ -36,6 +36,7 @@ define_dummy_symbol(mmgame_interface);
 #include "mmcityinfo/vehlist.h"
 #include "mmnetwork/network.h"
 #include "mmwidget/manager.h"
+#include "mmwidget/menu.h"
 
 // ?IsModemDialin@@YA_NXZ
 ARTS_IMPORT /*static*/ bool IsModemDialin();
@@ -164,4 +165,28 @@ void mmInterface::SetStateDefaults()
     MMSTATE.GameMode = mmGameMode::Cruise;
     MMSTATE.Weather = mmWeather::Sun;
     MMSTATE.EventId = 0;
+}
+
+void mmInterface::SetNavigationOrders()
+{
+    // TODO: Do this during menu construction instead
+    const auto fixup = [this](UIMenu* menu, std::initializer_list<const char*> labels) {
+        menu->SetNavigationOrder(labels.begin(), labels.size());
+    };
+
+    fixup((UIMenu*) MenuMgr()->GetNavBar(), {"mnav_prev", "mnav_opt", "mnav_help", "mnav_stow", "mnav_exit"});
+    fixup((UIMenu*) MenuRace,
+        {"race_roam", "race_blitz", "race_waypt", "race_circ", "RACE NAME", "race_drop_frame", "race desc icons",
+            "race_cenv", "LAPS", "race_laps", "CHECKPOINTS", "race_checkpoints", "OPPONENTS", "race_oppo", "race_env",
+            "TOD Icons", "Weather Icons", "TRAFFIC DENSITY", "PEDESTRIAN DENSITY", "COP DENSITY", "race_next"});
+    fixup((UIMenu*) MenuHostRace,
+        {"race_roam", "race_blitz", "race_waypt", "race_circ", "race_cops", "RACE NAME", "host_drop_frame",
+            "race desc icons", "LAPS", "host_laps", "CHECKPOINTS", "race_checkpoints", "host_checkpoints", "OPPONENTS",
+            "race_oppo", "race_cenv", "Password", "Max Players", "race_env", "TOD Icons", "Weather Icons",
+            "PEDESTRIAN DENSITY", "host_cont"});
+
+    fixup((UIMenu*) DlgDriverRec, {"compscroll", "drec_bltz", "drec_circ", "drec_chck", "dlg_done"});
+
+    fixup((UIMenu*) DlgHallOfFame,
+        {"compscroll", "drec_bltz", "drec_circ", "drec_chck", "hoff_amap", "hoff_prop", "hoff_pros", "dlg_done"});
 }

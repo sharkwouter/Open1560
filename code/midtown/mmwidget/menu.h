@@ -215,7 +215,7 @@ public:
     ARTS_IMPORT void ClearWidgets();
 
     // ?Decrement@UIMenu@@QAEHXZ
-    ARTS_IMPORT i32 Decrement();
+    ARTS_EXPORT b32 Decrement();
 
     // ?Disable@UIMenu@@QAEXXZ
     ARTS_IMPORT void Disable();
@@ -227,7 +227,11 @@ public:
     ARTS_IMPORT void Enable();
 
     // ?FindTheFirstFocusWidget@UIMenu@@QAEHXZ
-    ARTS_IMPORT i32 FindTheFirstFocusWidget();
+    i32 FindTheFirstFocusWidget();
+    i32 FindTheNextFocusWidget();
+    i32 FindThePrevFocusWidget();
+    i32 FindTheLastFocusWidget();
+    i32 FindFocusWidget(i32 start, i32 step);
 
     // ?GetBstate@UIMenu@@QAEHXZ
     ARTS_IMPORT i32 GetBstate();
@@ -239,7 +243,7 @@ public:
     ARTS_IMPORT i32 GetWidgetID();
 
     // ?Increment@UIMenu@@QAEHXZ
-    ARTS_IMPORT i32 Increment();
+    ARTS_EXPORT b32 Increment();
 
     // ?KeyboardAction@UIMenu@@QAEXTeqEvent@@@Z
     ARTS_IMPORT void KeyboardAction(eqEvent arg1);
@@ -260,7 +264,7 @@ public:
     ARTS_IMPORT void SetAction(UIMenu::eSource arg1);
 
     // ?SetBstate@UIMenu@@QAEXH@Z
-    ARTS_IMPORT void SetBstate(i32 arg1);
+    ARTS_IMPORT void SetBstate(i32 index);
 
     // ?SetFocusWidget@UIMenu@@QAEXH@Z
     ARTS_IMPORT void SetFocusWidget(i32 arg1);
@@ -270,6 +274,8 @@ public:
 
     // ?Update@UIMenu@@UAEXXZ
     ARTS_IMPORT void Update() override;
+
+    void SetNavigationOrder(const char* const* labels, usize count);
 
     // ?UI_BOTTOM_MARGIN@UIMenu@@2MA
     ARTS_IMPORT static f32 UI_BOTTOM_MARGIN;

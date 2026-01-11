@@ -58,7 +58,7 @@ public:
     ARTS_IMPORT void SetTextField();
 
     // ?Switch@UITextField@@UAEXH@Z
-    ARTS_IMPORT void Switch(i32 arg1) override;
+    ARTS_IMPORT void Switch(b32 arg1) override;
 
     // ?ToggleField@UITextField@@QAEXH@Z
     ARTS_EXPORT void ToggleField(i32 state);

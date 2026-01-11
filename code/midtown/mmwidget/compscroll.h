@@ -78,7 +78,7 @@ public:
     ARTS_IMPORT void SetVScrollVals();
 
     // ?Switch@UICompositeScroll@@UAEXH@Z
-    ARTS_IMPORT void Switch(i32 arg1) override;
+    ARTS_IMPORT void Switch(b32 arg1) override;
 
     // ?Update@UICompositeScroll@@UAEXXZ
     ARTS_IMPORT void Update() override;

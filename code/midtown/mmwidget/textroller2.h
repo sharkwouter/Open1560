@@ -58,7 +58,7 @@ public:
     ARTS_IMPORT i32 SetValue(i32 arg1);
 
     // ?Switch@UITextRoller2@@UAEXH@Z
-    ARTS_IMPORT void Switch(i32 arg1) override;
+    ARTS_IMPORT void Switch(b32 arg1) override;
 
     // ?Update@UITextRoller2@@UAEXXZ
     ARTS_IMPORT void Update() override;

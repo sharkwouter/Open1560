@@ -51,7 +51,7 @@ public:
     ARTS_IMPORT void SetType(i32 arg1);
 
     // ?Switch@UIButton@@UAEXH@Z
-    ARTS_IMPORT void Switch(i32 arg1) override;
+    ARTS_IMPORT void Switch(b32 arg1) override;
 
     // ?TestHit@UIButton@@QAEHMM@Z | unused
     i32 TestHit(f32 arg1, f32 arg2);

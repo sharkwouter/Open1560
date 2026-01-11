@@ -60,6 +60,7 @@ void UIMenu::CheckInput()
 
         switch (kev.Key) // Enable widget snapping when using arrows or joystick
         {
+            case EQ_VK_TAB:
             case EQ_VK_LEFT:
             case EQ_VK_RIGHT:
             case EQ_VK_UP:
@@ -115,7 +116,7 @@ void UIMenu::AddWidget(uiWidget* widget, aconst char* label, f32 x, f32 y, f32 w
     widget->Label = label;
     widget->Icon = icon;
     widget->Menu = this;
-    widget->WidgetID = (id != -1) ? id : widget_count_;
+    widget->WidgetID = (id != -1) ? id : (widget_count_ + 1000);
 
     Ptr<uiWidget*[]> widgets = arnewa uiWidget* [widget_count_ + 1] {};
     for (i32 i = 0; i < widget_count_; ++i)
@@ -154,6 +155,38 @@ void UIMenu::GetDimensions(f32& x, f32& y, f32& w, f32& h)
     h = menu_height_;
 }
 
+b32 UIMenu::Increment()
+{
+    DisableIME();
+
+    if (FindTheNextFocusWidget() != -1)
+        return false;
+
+    if (MenuMgr()->GetDialogMenu() || MenuMgr()->Is3D())
+    {
+        FindTheFirstFocusWidget();
+        return false;
+    }
+
+    return true;
+}
+
+b32 UIMenu::Decrement()
+{
+    DisableIME();
+
+    if (FindThePrevFocusWidget() != -1)
+        return false;
+
+    if (MenuMgr()->GetDialogMenu() || MenuMgr()->Is3D())
+    {
+        FindTheLastFocusWidget();
+        return false;
+    }
+
+    return true;
+}
+
 void UIMenu::ScaleWidget(f32& x, f32& y, f32& w, f32& h)
 {
     f32 l = menu_x_ + x * menu_width_;
@@ -183,6 +216,19 @@ b32 UIMenu::ScanInput(eqEvent* event)
     return true;
 }
 
+void UIMenu::SetNavigationOrder(const char* const* labels, usize count)
+{
+    const auto order = [labels, end = labels + count](uiWidget* widget) {
+        auto find =
+            std::find_if(labels, end, [widget](const char* label) { return !std::strcmp(label, widget->Label); });
+        ArAssert(find != end, "Unexpected widget");
+        return find - end;
+    };
+
+    std::sort(
+        &widgets_[0], &widgets_[widget_count_], [&](uiWidget* lhs, uiWidget* rhs) { return order(lhs) < order(rhs); });
+}
+
 uiWidget* UIMenu::FindWidget(i32 id)
 {
     for (i32 i = 0; i < widget_count_; ++i)
@@ -196,6 +242,24 @@ uiWidget* UIMenu::FindWidget(i32 id)
     return nullptr;
 }
 
+i32 UIMenu::FindFocusWidget(i32 start, i32 step)
+{
+    if (uiWidget* active = GetActiveWidget())
+        active->Switch(false);
+
+    for (i32 i = start; (i >= 0) && (i < widget_count_); i += step)
+    {
+        if (uiWidget* widget = widgets_[i]; widget->Enabled && !widget->ReadOnly)
+        {
+            *p_b_state_ = i;
+            widgets_[i]->Switch(true);
+            return i;
+        }
+    }
+
+    return -1;
+}
+
 void UIMenu::DisableIME()
 {
     if (SDL_TextInputActive(g_MainWindow))
@@ -203,4 +267,24 @@ void UIMenu::DisableIME()
         Displayf("Disabled Text Input");
         SDL_StopTextInput(g_MainWindow);
     }
+}
+
+i32 UIMenu::FindTheFirstFocusWidget()
+{
+    return FindFocusWidget(0, 1);
+}
+
+i32 UIMenu::FindTheNextFocusWidget()
+{
+    return FindFocusWidget(*p_b_state_ + 1, 1);
+}
+
+i32 UIMenu::FindThePrevFocusWidget()
+{
+    return FindFocusWidget(*p_b_state_ - 1, -1);
+}
+
+i32 UIMenu::FindTheLastFocusWidget()
+{
+    return FindFocusWidget(widget_count_ - 1, -1);
 }
