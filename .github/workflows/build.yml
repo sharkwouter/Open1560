@@ -46,3 +46,4 @@ jobs:
       run: |
         7z a -tzip "artifacts/Open1560.zip" "${{github.workspace}}/build/output/*"
         gh release upload "build" "artifacts/Open1560.zip" --clobber
+        git push --force origin HEAD:refs/tags/build
