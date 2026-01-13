@@ -20,7 +20,8 @@ define_dummy_symbol(data7_callback);
 
 #include "callback.h"
 
-Callback NullCallback {};
+// ?NullCallback@@3VCallback@@A
+ARTS_EXPORT [[deprecated]] Callback NullCallback {};
 
 Callback::Callback(Static0 func) noexcept
     : Callback([func] { func(); })
@@ -53,12 +54,6 @@ Callback::Callback(Member2 func, Base* this_ptr, void* param) noexcept
 {
     if (!this_ptr)
         Quitf("Can't have callback to member function with nil 'this'");
-}
-
-void Callback::Call(void* param)
-{
-    if (invoke_)
-        invoke_(data_, param);
 }
 
 CallbackArray::CallbackArray(Callback* callbacks, usize capacity)

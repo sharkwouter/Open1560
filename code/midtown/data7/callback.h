@@ -88,9 +88,6 @@ private:
     u16 capacity_ {};
 };
 
-// ?NullCallback@@3VCallback@@A
-ARTS_EXPORT [[deprecated]] extern Callback NullCallback;
-
 inline Callback::Callback(std::nullptr_t) noexcept
     : Callback()
 {}
@@ -122,6 +119,22 @@ inline Callback::Callback(Func func) noexcept
     static_assert(std::is_trivially_copyable_v<Func>, "Function is not trivially copyable");
 
     new (data_) Func(func);
+}
+
+#ifdef _M_IX86
+template <>
+inline Callback::Callback(void (*func)()) noexcept
+    : invoke_(reinterpret_cast<void(__fastcall*)(void*, void*)>(
+          func)) // cdecl to fastcall - func can safely ignore the two arguments passed in ecx and edx
+{}
+#else
+#    error This optimisation might not be valid
+#endif
+
+inline void Callback::Call(void* param)
+{
+    if (invoke_)
+        invoke_(data_, param);
 }
 
 inline bool Callback::operator==(const Callback& other) const
