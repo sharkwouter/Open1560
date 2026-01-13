@@ -16,10 +16,6 @@ arts_component "agigl"
         "glstream.h",
     }
 
-    links {
-        "glad",
-        "opengl32",
-    }
-
+    links { "glad" }
     includeGlad()
     includeSDL3()

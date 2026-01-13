@@ -64,6 +64,7 @@ private:
     u32 current_texture_ {};
 
     bool flip_winding_ {};
+    bool zero_to_one_ {};
     bool reversed_z_ {};
 
     Ptr<agiGLStreamBuffer> vbo_;

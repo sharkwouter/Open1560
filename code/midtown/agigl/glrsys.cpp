@@ -247,6 +247,27 @@ i32 agiGLRasterizer::BeginGfx()
 {
     agiGL->CheckErrors();
 
+    zero_to_one_ = false;
+    flip_winding_ = false;
+    // Designed for floating point framebuffers
+    // https://nlguillemot.wordpress.com/2016/12/07/reversed-z-in-opengl/
+    reversed_z_ = false;
+
+#if 1
+    if (agiGL->HasExtension(/*450,*/ "GL_ARB_clip_control"))
+    {
+        flip_winding_ = true;
+        zero_to_one_ = true;
+
+        glClipControl(
+            flip_winding_ ? GL_UPPER_LEFT : GL_LOWER_LEFT, zero_to_one_ ? GL_ZERO_TO_ONE : GL_NEGATIVE_ONE_TO_ONE);
+    }
+    else if (agiGL->HasExtension("GL_NV_depth_buffer_float"))
+    {
+        glDepthRangedNV(-1.0, 1.0);
+    }
+#endif
+
     if (!agiGL->IsLegacyCompat() || (agiGL->HasVersion(200) && !PARAM_ancientgl.get_or(false)))
     {
         InitModern();
@@ -264,46 +285,17 @@ i32 agiGLRasterizer::BeginGfx()
     proj_mul[0] = 2.0f / Pipe()->GetWidth();
     proj_add[0] = -1.0f;
 
-    // y = -2y / height + 1
-    proj_mul[1] = -2.0f / Pipe()->GetHeight();
-    proj_add[1] = 1.0f;
+    // y = flip_winding_ ? (2y / height - 1) : (-2y / height + 1)
+    proj_mul[1] = (flip_winding_ ? 2.0f : -2.0f) / Pipe()->GetHeight();
+    proj_add[1] = (flip_winding_ ? -1.0f : 1.0f);
 
-    // z = 2z - 1
-    proj_mul[2] = 2.0f;
-    proj_add[2] = -1.0f;
+    // z =  zero_to_one ? z : (2z - 1)
+    proj_mul[2] = zero_to_one_ ? 1.0f : 2.0f;
+    proj_add[2] = zero_to_one_ ? 0.0f : -1.0f;
 
     // w = 1
     proj_mul[3] = 0.0f;
     proj_add[3] = 1.0f;
-
-    flip_winding_ = false;
-
-    // Designed for floating point framebuffers
-    // https://nlguillemot.wordpress.com/2016/12/07/reversed-z-in-opengl/
-    reversed_z_ = false;
-
-#if 0
-    if (agiGL->HasExtension(/*450,*/ "GL_ARB_clip_control"))
-    {
-        flip_winding_ = true;
-
-        glClipControl(flip_winding_ ? GL_UPPER_LEFT : GL_LOWER_LEFT, GL_ZERO_TO_ONE);
-
-        if (flip_winding_)
-        {
-            // y = 2y / height - 1
-            proj_mul[1] = -proj_mul[1];
-            proj_add[1] = -proj_add[1];
-        }
-
-        proj_mul[2] = 1.0f;
-        proj_add[2] = 0.0f;
-    }
-    else if (agiGL->HasExtension("GL_NV_depth_buffer_float"))
-    {
-        glDepthRangedNV(-1.0, 1.0);
-    }
-#endif
 
     if (reversed_z_)
     {
@@ -525,9 +517,13 @@ void agiGLRasterizer::InitModern()
     fog_color_ = {0.0f, 0.0f, 0.0f};
     glUniform3f(uniform_fog_color_, fog_color_.x, fog_color_.y, fog_color_.z);
 
-    glUniform2f(glGetUniformLocation(shader_, "u_RenderScale"),
-        static_cast<f32>(Pipe()->GetRenderWidth()) / Pipe()->GetWidth(),
-        static_cast<f32>(Pipe()->GetRenderHeight()) / Pipe()->GetHeight());
+    GLfloat render_scale[4];
+    render_scale[0] = static_cast<f32>(Pipe()->GetRenderWidth()) / Pipe()->GetWidth();
+    render_scale[1] = static_cast<f32>(Pipe()->GetRenderHeight()) / Pipe()->GetHeight();
+    render_scale[2] = Pipe()->GetRenderWidth() / 2.0f;
+    render_scale[3] = Pipe()->GetRenderHeight() / (flip_winding_ ? 2.0f : -2.0f);
+
+    glUniform4fv(glGetUniformLocation(shader_, "u_RenderScale"), 1, render_scale);
 
     agiGL->CheckErrors();
 }

@@ -21,8 +21,6 @@
 #include "agi/error.h"
 #include "agi/pipeline.h"
 
-#include <glad/glad.h>
-
 void agiGLBitmap::EndGfx()
 {
     if (tex_def_)

@@ -429,18 +429,15 @@ void agiGLPipeline::CopyBitmap(i32 dst_x, i32 dst_y, agiBitmap* src, i32 src_x, 
     agiScreenVtx verts[4] {blank, blank, blank, blank};
     u16 indices[6] {0, 1, 3, 1, 2, 3};
 
-    f32 const inv_tex_w = 1.0f / src->GetWidth();
-    f32 const inv_tex_h = 1.0f / src->GetHeight();
-
     verts[3].x = verts[0].x = static_cast<f32>(dst_x);
     verts[1].y = verts[0].y = static_cast<f32>(dst_y);
-    verts[3].tu = verts[0].tu = src_x * inv_tex_w;
-    verts[1].tv = verts[0].tv = src_y * inv_tex_h;
+    verts[3].tu = verts[0].tu = static_cast<f32>(src_x) / static_cast<f32>(src->GetWidth());
+    verts[1].tv = verts[0].tv = static_cast<f32>(src_y) / static_cast<f32>(src->GetHeight());
 
     verts[1].x = verts[2].x = static_cast<f32>(dst_x + width);
     verts[3].y = verts[2].y = static_cast<f32>(dst_y + height);
-    verts[1].tu = verts[2].tu = (src_x + width) * inv_tex_w;
-    verts[3].tv = verts[2].tv = (src_y + height) * inv_tex_h;
+    verts[1].tu = verts[2].tu = static_cast<f32>(src_x + width) / static_cast<f32>(src->GetWidth());
+    verts[3].tv = verts[2].tv = static_cast<f32>(src_y + height) / static_cast<f32>(src->GetHeight());
 
     rasterizer_->Mesh(agiVtxType::Screen, (agiVtx*) verts, 4, indices, 6);
 
