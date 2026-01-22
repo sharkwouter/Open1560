@@ -22,6 +22,7 @@
 #include <SDL3/SDL_init.h>
 #include <SDL3/SDL_timer.h>
 
+#include <atomic>
 #include <vector>
 
 static HRESULT DoFunctionNotImplemented(const char* name, usize times)
@@ -279,6 +280,8 @@ public:
 
     f32 Calculate(u32 now, u32 /*duration*/) final override
     {
+        // With SDL, we can only really control the magnitude of the rumble.
+        // There is no way to control the actual period or phase, so these calculations have no real meaning.
         now %= Period.dwPeriod;
         now = (now * 36000) / Period.dwPeriod;
         now = (now + Period.dwPhase) % 36000;
@@ -300,60 +303,59 @@ private:
     DIPERIODIC Period {};
 };
 
-class ioSquareRumbleEffect final : public ioPeriodicRumbleEffect
+class ioSineRumbleEffect final : public ioPeriodicRumbleEffect
 {
 public:
     using ioPeriodicRumbleEffect::ioPeriodicRumbleEffect;
 
     f32 CalculatePeriodic(f32 /*offset*/) override
     {
+        // We don't really have any control over the shape of the waveform, only its magnitude.
+        // Maybe this could eventually be smarter about about chosing between the low_frequency and high_frequency
+        // parameters of SDL_RumbleGamepad, but probably not.
         return 1.0f;
     }
 };
 
-class ioSawtoothDownRumbleEffect final : public ioPeriodicRumbleEffect
+template <typename Self, typename ComType>
+class ArUnknown : public ComType
 {
 public:
-    using ioPeriodicRumbleEffect::ioPeriodicRumbleEffect;
-
-    f32 CalculatePeriodic(f32 offset) override
-    {
-        return 1.0f - offset;
-    }
-};
-
-class ioRumbleEffect_DIEffect final : public IDirectInputEffect
-{
-public:
-    ioRumbleEffect_DIEffect(GUID guid, Ptr<ioRumbleEffect> effect)
-        : Guid(guid)
-        , Effect(std::move(effect))
-    {}
-
     /*** IUnknown methods ***/
     STDMETHOD(QueryInterface)(REFIID /*riid*/, LPVOID* /*ppvObj*/) override
     {
-        return FunctionNotImplemented();
+        return E_NOINTERFACE;
     }
 
-    STDMETHOD_(ULONG, AddRef)() override
+    STDMETHOD_(ULONG, AddRef)() override final
     {
         return ++RefCount;
     }
 
-    STDMETHOD_(ULONG, Release)() override
+    STDMETHOD_(ULONG, Release)() override final
     {
         ULONG refs = --RefCount;
 
         if (refs == 0)
         {
             ArWithStaticHeap static_heap;
-
-            delete this;
+            delete static_cast<Self*>(this);
         }
 
         return refs;
     }
+
+private:
+    std::atomic<ULONG> RefCount {1};
+};
+
+class ioRumbleEffect_DIEffect final : public ArUnknown<ioRumbleEffect_DIEffect, IDirectInputEffect>
+{
+public:
+    ioRumbleEffect_DIEffect(GUID guid, Ptr<ioRumbleEffect> effect)
+        : Guid(guid)
+        , Effect(std::move(effect))
+    {}
 
     /*** IDirectInputEffect methods ***/
     STDMETHOD(Initialize)(HINSTANCE, DWORD, REFGUID)
@@ -387,7 +389,6 @@ public:
     STDMETHOD(Stop)()
     {
         Effect->Stop();
-
         return DI_OK;
     }
 
@@ -412,12 +413,11 @@ public:
     }
 
 private:
-    ULONG RefCount {1};
     GUID Guid {};
     Ptr<ioRumbleEffect> Effect {};
 };
 
-class ioGamepad_DIDevice2A final : public IDirectInputDevice2A
+class ioGamepad_DIDevice2A final : public ArUnknown<ioGamepad_DIDevice2A, IDirectInputDevice2A>
 {
 public:
     ioGamepad_DIDevice2A(std::vector<SDL_Gamepad*> gamepads)
@@ -435,25 +435,6 @@ public:
         }
 
         return E_NOINTERFACE;
-    }
-
-    STDMETHOD_(ULONG, AddRef)() override
-    {
-        return ++RefCount;
-    }
-
-    STDMETHOD_(ULONG, Release)() override
-    {
-        ULONG refs = --RefCount;
-
-        if (refs == 0)
-        {
-            ArWithStaticHeap static_heap;
-
-            delete this;
-        }
-
-        return refs;
     }
 
     /*** IDirectInputDeviceA methods ***/
@@ -632,10 +613,8 @@ public:
 
         Ptr<ioRumbleEffect> effect;
 
-        if (rguid == GUID_Square)
-            effect = arnew ioSquareRumbleEffect(&Gamepad);
-        else if (rguid == GUID_SawtoothDown)
-            effect = arnew ioSawtoothDownRumbleEffect(&Gamepad);
+        if (rguid == GUID_Sine)
+            effect = arnew ioSineRumbleEffect(&Gamepad);
         else
             return DIERR_INVALIDPARAM;
 
@@ -658,7 +637,7 @@ public:
     {
         if (dwEffType == DIEFT_PERIODIC)
         {
-            DIEFFECTINFOA effect {sizeof(effect), GUID_Square, DIEFT_PERIODIC, 0, 0, "Square"};
+            DIEFFECTINFOA effect {sizeof(effect), GUID_Sine, DIEFT_PERIODIC, 0, 0, "Sine"};
             lpCallback(&effect, pvRef);
             return DI_OK;
         }
@@ -704,42 +683,16 @@ public:
     }
 
 private:
-    ULONG RefCount {1};
     ioGamepad Gamepad;
 };
 
-class ioGamepad_DI2A final : public IDirectInput2A
+class ioGamepad_DI2A final : public ArUnknown<ioGamepad_DI2A, IDirectInput2A>
 {
 public:
     ioGamepad_DI2A()
     {
         if (!SDL_WasInit(SDL_INIT_GAMEPAD))
             SDL_InitSubSystem(SDL_INIT_GAMEPAD);
-    }
-
-    /*** IUnknown methods ***/
-    STDMETHOD(QueryInterface)(REFIID /*riid*/, LPVOID* /*ppvObj*/) override
-    {
-        return FunctionNotImplemented();
-    }
-
-    STDMETHOD_(ULONG, AddRef)() override
-    {
-        return ++RefCount;
-    }
-
-    STDMETHOD_(ULONG, Release)() override
-    {
-        ULONG refs = --RefCount;
-
-        if (refs == 0)
-        {
-            ArWithStaticHeap static_heap;
-
-            delete this;
-        }
-
-        return refs;
     }
 
     /*** IDirectInputA methods ***/
@@ -820,9 +773,6 @@ public:
     {
         return FunctionNotImplemented();
     }
-
-private:
-    ULONG RefCount {1};
 };
 
 IDirectInputA* Create_SDL_IDirectInput2A()
