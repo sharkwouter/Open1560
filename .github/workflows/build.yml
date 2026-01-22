@@ -25,6 +25,9 @@ jobs:
     - name: Format Check
       run: python3 tools/format.py --dry
 
+    - name: ASM Check
+      run: python3 tools/asm.py
+
     - name: Premake
       run: tools/premake5.exe ${{env.PREMAKE_GENERATOR}} --MM1_GAME_DIRECTORY="${{github.workspace}}/build/output/"
 
