@@ -97,6 +97,7 @@ class Bank;
 class Base;
 class Callback;
 class HashTable;
+class Stream;
 class string;
 struct LocString;
 

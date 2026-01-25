@@ -47,8 +47,6 @@
 
 char* arts_strdup(const char* str); // StringDuplicate
 
-class Stream;
-
 class ConstString
 {
 public:
