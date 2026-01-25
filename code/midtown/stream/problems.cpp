@@ -28,14 +28,10 @@ static constexpr usize MAX_PROBLEMS = 4096;
 
 struct problem_t
 {
-public:
     ConstString Message;
     ConstString Target;
     ConstString Location;
     i32 Count {1};
-
-    ARTS_EXPORT problem_t() = default;
-    ARTS_EXPORT ~problem_t() = default;
 };
 
 check_size(problem_t, 0x10);
