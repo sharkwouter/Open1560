@@ -154,7 +154,7 @@ set_sym(None, len(lines))
 import_syms, export_syms, dir_imports = get_code_syms()
 
 for sym in import_syms - public_syms:
-    raise Exception(f'Missing {sym}')
+    raise Exception(f'Symbol '{sym}' referenced from C++ does not exist in ASM')
 
 public_syms = public_syms & import_syms
 
