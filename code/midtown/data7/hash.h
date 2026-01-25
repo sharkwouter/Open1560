@@ -52,20 +52,20 @@ public:
     // ??4HashTable@@QAEXAAV0@@Z | unused
     void operator=(HashTable& other);
 
-    // ?Access@HashTable@@QAEPAXPAD@Z
-    void* Access(const char* key);
+    // ?Access@HashTable@@QAEPAXPBD@Z
+    ARTS_EXPORT void* Access(const char* key);
 
     // ?Change@HashTable@@QAEHPAD0@Z | unused
     b32 Change(const char* old_key, const char* new_key);
 
-    // ?Delete@HashTable@@QAEHPAD@Z
-    b32 Delete(const char* key);
+    // ?Delete@HashTable@@QAEHPBD@Z
+    ARTS_EXPORT b32 Delete(const char* key);
 
     // ?Init@HashTable@@QAEXH@Z
     ARTS_EXPORT void Init(i32 bucket_count);
 
-    // ?Insert@HashTable@@QAEHPADPAX@Z
-    b32 Insert(const char* key, void* value);
+    // ?Insert@HashTable@@QAEHPBDPAX@Z
+    ARTS_EXPORT b32 Insert(const char* key, void* value);
 
     // ?Kill@HashTable@@QAEXXZ
     ARTS_EXPORT void Kill();

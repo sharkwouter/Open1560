@@ -29,8 +29,8 @@ public:
     // ?GetClass@Base@@UAEPAVMetaClass@@XZ
     ARTS_EXPORT virtual MetaClass* GetClass();
 
-    // ?GetTypeNameV@Base@@UAEPADXZ
-    virtual const char* GetTypeNameV();
+    // ?GetTypeNameV@Base@@UAEPBDXZ
+    ARTS_EXPORT virtual const char* GetTypeNameV();
 
     // ?BeforeSave@Base@@UAEXXZ
     ARTS_EXPORT virtual void BeforeSave();

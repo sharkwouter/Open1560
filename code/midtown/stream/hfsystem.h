@@ -56,8 +56,8 @@ public:
 
 check_size(HierFileSystem, 0x8);
 
-// ?FQN@@YAPADPAD@Z
-const char* FQN(const char* path);
+// ?FQN@@YAPBDPBD@Z
+ARTS_EXPORT const char* FQN(const char* path);
 
 // ?HFS@@3VHierFileSystem@@A
 extern HierFileSystem HFS;

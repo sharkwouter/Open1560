@@ -45,7 +45,8 @@
 
 #define arts_strtok strtok_s
 
-char* arts_strdup(const char* str); // StringDuplicate
+// ?arts_strdup@@YAPADPBD@Z
+ARTS_EXPORT char* arts_strdup(const char* str); // StringDuplicate
 
 class ConstString
 {

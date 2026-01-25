@@ -143,8 +143,8 @@ public:
     // ?EndAllGfx@agiPipeline@@QAEXXZ
     void EndAllGfx();
 
-    // ?GetBitmap@agiPipeline@@QAEPAVagiBitmap@@PADMMH@Z
-    RcOwner<agiBitmap> GetBitmap(const char* name, f32 sx, f32 sy, i32 flags);
+    // ?GetBitmap@agiPipeline@@QAEPAVagiBitmap@@PBDMMH@Z
+    ARTS_EXPORT RcOwner<agiBitmap> GetBitmap(const char* name, f32 sx, f32 sy, i32 flags);
 
     // ?GetDLP@agiPipeline@@QAEPAVDLP@@PAD0PAVVector3@@HH@Z
     ARTS_IMPORT RcOwner<DLP> GetDLP(aconst char* arg1, aconst char* arg2, Vector3* arg3, i32 arg4, i32 arg5);

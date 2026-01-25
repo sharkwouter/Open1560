@@ -207,7 +207,8 @@ public:
         return (x != other.x) || (y != other.y) || (z != other.z);
     }
 
-    operator Vector4() const;
+    // ??BVector3@@QBE?AVVector4@@XZ
+    ARTS_EXPORT operator Vector4() const;
 
     f32 x {};
     f32 y {};

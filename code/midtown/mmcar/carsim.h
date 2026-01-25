@@ -63,7 +63,7 @@ ARTS_IMPORT extern Vector3 PlayerPos;
 ARTS_IMPORT extern f32 WeatherFriction;
 
 // ?EnableSmoke@@3HA
-extern b32 EnableSmoke;
+ARTS_EXPORT extern b32 EnableSmoke;
 
 // ?ForceSmoke@@3HA
 extern b32 ForceSmoke;

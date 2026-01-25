@@ -78,8 +78,8 @@ public:
     // ?OpenAny@FileSystem@@SAPAVStream@@PADHPAXH@Z
     static Owner<Stream> OpenAny(const char* path, b32 read_only, void* buffer, isize buffer_len);
 
-    // ?PagerInfoAny@FileSystem@@SAHPADAAUPagerInfo_t@@@Z
-    static b32 PagerInfoAny(const char* path, PagerInfo_t& pager);
+    // ?PagerInfoAny@FileSystem@@SAHPBDAAUPagerInfo_t@@@Z
+    ARTS_EXPORT static b32 PagerInfoAny(const char* path, PagerInfo_t& pager);
 
     // ?SearchAll@FileSystem@@SAPAV1@PAD00H0@Z
     static FileSystem* SearchAll(

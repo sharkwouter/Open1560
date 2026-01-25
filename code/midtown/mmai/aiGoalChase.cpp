@@ -30,10 +30,17 @@ static mem::cmd_param PARAM_speedycops {"speedycops"};
 static bool EnableCopSpeedBoost = false;
 static const f32 CopFrameRate = 30.0f;
 
-f32 CopSpeedBoost = 1.0f;
-f32 CopBrakeBoost = 1.0f;
-f32 CopSteerBoost1 = 0.5f;
-f32 CopSteerBoost2 = 0.85f;
+// ?CopSpeedBoost@@3MA
+ARTS_EXPORT f32 CopSpeedBoost = 1.0f;
+
+// ?CopBrakeBoost@@3MA
+ARTS_EXPORT f32 CopBrakeBoost = 1.0f;
+
+// ?CopSteerBoost1@@3MA
+ARTS_EXPORT f32 CopSteerBoost1 = 0.5f;
+
+// ?CopSteerBoost2@@3MA
+ARTS_EXPORT f32 CopSteerBoost2 = 0.85f;
 
 hook_func(INIT_main, [] { EnableCopSpeedBoost = PARAM_speedycops.get_or(true); });
 

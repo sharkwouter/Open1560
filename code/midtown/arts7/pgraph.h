@@ -29,8 +29,8 @@ public:
     // ??1asPerfGraph@@QAE@XZ
     ~asPerfGraph();
 
-    // ?AddComponent@asPerfGraph@@QAEXPADPAMAAVVector3@@@Z
-    void AddComponent(const char* name, f32* value, const Vector3& color);
+    // ?AddComponent@asPerfGraph@@QAEXPBDPAMABVVector3@@@Z
+    ARTS_EXPORT void AddComponent(const char* name, f32* value, const Vector3& color);
 
     // ?Cull@asPerfGraph@@QAEXXZ
     void Cull();

@@ -77,8 +77,8 @@ public:
     // ?PlaceLabelRef@MiniParser@@QAEXPAX@Z
     void PlaceLabelRef(void* ptr);
 
-    // ?PrintString@MiniParser@@QAEXPADH@Z
-    void PrintString(const char* str, i32 len);
+    // ?PrintString@MiniParser@@QAEXPBDH@Z
+    ARTS_EXPORT void PrintString(const char* str, i32 len);
 
     // ?Printf@MiniParser@@QAAXPBDZZ
     ARTS_EXPORT void Printf(ARTS_FORMAT_STRING const char* format, ...);

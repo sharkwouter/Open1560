@@ -87,8 +87,8 @@ public:
     ARTS_EXPORT void SetDeviceNum(u32 device_id);
 
 private:
-    // ?GetErrorMessage@MixerCTL@@AAEPADK@Z
-    const char* GetErrorMessage(ulong error);
+    // ?GetErrorMessage@MixerCTL@@AAEPBDK@Z
+    ARTS_EXPORT const char* GetErrorMessage(ulong error);
 
     // ?WindowProc@MixerCTL@@EAEJPAUHWND__@@IIJ@Z
     ARTS_EXPORT LRESULT WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) override;

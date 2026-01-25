@@ -108,6 +108,7 @@ public:
 #ifdef ARTS_STANDALONE
     i16 OppFinishPositions[MaxOpponents] {};
 #else
+    // ?OppFinishPositions@mmSingleCircuit@@2PAFA
     ARTS_EXPORT static i16 OppFinishPositions[MaxOpponents];
     i16 OldOppFinishPositions[8] {};
 #endif
@@ -117,6 +118,7 @@ public:
 #ifdef ARTS_STANDALONE
     i32 OppNumCheck[MaxOpponents] {};
 #else
+    // ?OppNumCheck@mmSingleCircuit@@2PAHA
     ARTS_EXPORT static i32 OppNumCheck[MaxOpponents];
     i32 OldOppNumCheck[8] {};
 #endif

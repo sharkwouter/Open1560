@@ -27,9 +27,9 @@ constexpr usize MAX_CLASSES = 512;
 class MetaClass
 {
 public:
-    // ??0MetaClass@@QAE@PADIP6APAXH@ZP6AXPAXH@ZP6AXXZPAV0@@Z
-    MetaClass(const char* name, usize size, void* (*allocate)(isize), void (*free)(void*, isize), void (*declare)(void),
-        MetaClass* parent);
+    // ??0MetaClass@@QAE@PBDIP6APAXH@ZP6AXPAXH@ZP6AXXZPAV0@@Z
+    ARTS_EXPORT MetaClass(const char* name, usize size, void* (*allocate)(isize), void (*free)(void*, isize),
+        void (*declare)(void), MetaClass* parent);
 
     // ??1MetaClass@@QAE@XZ
     ARTS_EXPORT ~MetaClass();
@@ -82,8 +82,8 @@ public:
 
     static void FixupClasses();
 
-    // ?DeclareNamedTypedField@MetaClass@@SAXPADIPAUMetaType@@@Z
-    static void DeclareNamedTypedField(const char* name, usize offset, MetaType* type);
+    // ?DeclareNamedTypedField@MetaClass@@SAXPBDIPAUMetaType@@@Z
+    ARTS_EXPORT static void DeclareNamedTypedField(const char* name, usize offset, MetaType* type);
 
     // ?FindByName@MetaClass@@SAPAV1@PADPAV1@@Z
     static MetaClass* FindByName(const char* name, MetaClass* root = &RootMetaClass);
@@ -101,7 +101,7 @@ public:
     static i32 NextSerial;
 
     // ?RootMetaClass@MetaClass@@2V1@A
-    static MetaClass RootMetaClass;
+    ARTS_EXPORT static MetaClass RootMetaClass;
 
     // ?ppField@MetaClass@@2PAPAUMetaField@@A
     static MetaField** ppField;

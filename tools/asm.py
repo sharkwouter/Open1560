@@ -256,3 +256,13 @@ if unused_exports:
     for sym in unused_exports:
         print(sym)
     exit(1)
+
+ignored_exports = [ '_', '??_E', '?GetClass', '??_L@YGXPAXIHP6EX0@Z1@Z', '??_M@YGXPAXIHP6EX0@Z@Z', '?Add@?$agiLib@VagiTexParameters@@VagiTexDef@@@@QAEHAAVagiTexParameters@@@Z' ]
+missing_exports = extern_syms.keys() - export_syms
+missing_exports = { sym for sym in missing_exports if not any(sym.startswith(v) for v in ignored_exports) }
+
+if missing_exports:
+    print('Missing exports:')
+    for sym in missing_exports:
+        print(sym)
+    exit(1)

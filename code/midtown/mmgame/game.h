@@ -166,6 +166,7 @@ public:
 #ifdef ARTS_STANDALONE
     OppIconInfo OppIcons[MaxOpponents] {};
 #else
+    // ?OppIcons@mmGame@@2PAUOppIconInfo@@A
     ARTS_EXPORT static OppIconInfo OppIcons[MaxOpponents];
     OppIconInfo OldOppIcons[8] {};
 #endif

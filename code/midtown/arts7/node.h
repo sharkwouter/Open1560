@@ -85,8 +85,8 @@ public:
     // ?InsertChild@asNode@@QAEHHPAV1@@Z
     ARTS_EXPORT b32 InsertChild(i32 index, asNode* child);
 
-    // ?Load@asNode@@QAEHPAD@Z
-    b32 Load(const char* path);
+    // ?Load@asNode@@QAEHPBD@Z
+    ARTS_EXPORT b32 Load(const char* path);
 
     // ?NumChildren@asNode@@QAEHXZ
     i32 NumChildren();
@@ -110,8 +110,8 @@ public:
     // ?Save@asNode@@QAEHPAD@Z
     b32 Save(const char* path);
 
-    // ?SetName@asNode@@QAEXPAD@Z
-    void SetName(const char* name);
+    // ?SetName@asNode@@QAEXPBD@Z
+    ARTS_EXPORT void SetName(const char* name);
 
     // ?SwitchTo@asNode@@QAEXH@Z | unused
     void SwitchTo(i32 index);

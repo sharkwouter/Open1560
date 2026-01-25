@@ -105,7 +105,8 @@ public:
 #ifdef ARTS_STANDALONE
     i32 OppNumCheck[MaxOpponents] {};
 #else
-    static i32 OppNumCheck[MaxOpponents];
+    // ?OppNumCheck@mmGameSingle@@2PAHA
+    ARTS_EXPORT static i32 OppNumCheck[MaxOpponents];
     i32 OldOppNumCheck[8] {};
 
     [[deprecated]] i32 field_1E5B4[8] {};
@@ -116,7 +117,8 @@ public:
 #ifdef ARTS_STANDALONE
     i16 OppFinishPositions[MaxOpponents] {};
 #else
-    static i16 OppFinishPositions[MaxOpponents];
+    // ?OppFinishPositions@mmGameSingle@@2PAFA
+    ARTS_EXPORT static i16 OppFinishPositions[MaxOpponents];
     i16 OldOppFinishPositions[8] {};
 #endif
 

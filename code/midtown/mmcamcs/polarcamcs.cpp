@@ -20,4 +20,5 @@ define_dummy_symbol(mmcamcs_polarcamcs);
 
 #include "polarcamcs.h"
 
-bool EnablePolarCamCollision = false;
+// ?EnablePolarCamCollision@@3_NA
+ARTS_EXPORT bool EnablePolarCamCollision = false;

@@ -230,8 +230,8 @@ public:
     // ?GetName@agiTexLut@@UAEPADXZ
     aconst char* GetName() override;
 
-    // ?Init@agiTexLut@@QAEHPAD@Z
-    i32 Init(const char* name);
+    // ?Init@agiTexLut@@QAEHPBD@Z
+    ARTS_EXPORT i32 Init(const char* name);
 
 protected:
     // ??0agiTexLut@@IAE@PAVagiPipeline@@@Z

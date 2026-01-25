@@ -32,8 +32,8 @@ public:
     // ?GetVehicleID@mmVehList@@QAEHPAD@Z
     ARTS_EXPORT i32 GetVehicleID(aconst char* name);
 
-    // ?GetVehicleInfo@mmVehList@@QAEPAVmmVehInfo@@PAD@Z
-    mmVehInfo* GetVehicleInfo(const char* name);
+    // ?GetVehicleInfo@mmVehList@@QAEPAVmmVehInfo@@PBD@Z
+    ARTS_EXPORT mmVehInfo* GetVehicleInfo(const char* name);
 
     // ?GetVehicleInfo@mmVehList@@QAEPAVmmVehInfo@@H@Z
     ARTS_EXPORT mmVehInfo* GetVehicleInfo(i32 index);

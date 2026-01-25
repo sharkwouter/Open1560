@@ -26,7 +26,7 @@ class Matrix34
 {
 public:
     // ??0Matrix34@@QAE@XZ | inline
-    constexpr inline Matrix34() noexcept = default;
+    ARTS_EXPORT constexpr inline Matrix34() noexcept = default;
 
     constexpr inline Matrix34(Vector3 m0, Vector3 m1, Vector3 m2, Vector3 m3) noexcept
         : m0(m0)

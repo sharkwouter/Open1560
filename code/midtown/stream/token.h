@@ -36,8 +36,8 @@ public:
     // ?IgnoreToken@Tokenizer@@QAEXXZ
     ARTS_EXPORT void IgnoreToken();
 
-    // ?MatchToken@Tokenizer@@QAEXPAD@Z
-    void MatchToken(const char* value);
+    // ?MatchToken@Tokenizer@@QAEXPBD@Z
+    ARTS_EXPORT void MatchToken(const char* value);
 
 private:
     const char* name_ {};

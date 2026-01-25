@@ -38,8 +38,8 @@ public:
     // ?GetName@agiBitmap@@UAEPADXZ
     aconst char* GetName() override;
 
-    // ?Init@agiBitmap@@QAEHPADMMH@Z
-    i32 Init(const char* name, f32 sx, f32 sy, i32 flags);
+    // ?Init@agiBitmap@@QAEHPBDMMH@Z
+    ARTS_EXPORT i32 Init(const char* name, f32 sx, f32 sy, i32 flags);
 
     // ?SetTransparency@agiBitmap@@QAEXH@Z
     ARTS_EXPORT void SetTransparency(b32 enabled);

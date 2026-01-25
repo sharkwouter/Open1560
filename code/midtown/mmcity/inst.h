@@ -121,7 +121,7 @@ public:
     static void* operator new(std::size_t size);
 
     // ??3mmInstance@@SAXPAX@Z | inline
-    static void operator delete(void* ptr);
+    ARTS_EXPORT static void operator delete(void* ptr);
 
     // ?DeclareFields@mmInstance@@SAXXZ
     ARTS_IMPORT static void DeclareFields();

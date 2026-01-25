@@ -29,14 +29,14 @@ public:
     // ??1mmInfoBase@@UAE@XZ | inline
     ARTS_EXPORT ~mmInfoBase() override = default;
 
-    // ?Load@mmInfoBase@@QAEHPAD@Z
-    b32 Load(const char* path);
+    // ?Load@mmInfoBase@@QAEHPBD@Z
+    ARTS_EXPORT b32 Load(const char* path);
 
-    // ?Save@mmInfoBase@@QAEHPAD@Z
-    b32 Save(const char* path);
+    // ?Save@mmInfoBase@@QAEHPBD@Z
+    ARTS_EXPORT b32 Save(const char* path);
 
-    // ?SetIOPath@mmInfoBase@@QAEXPAD@Z
-    void SetIOPath(const char* path);
+    // ?SetIOPath@mmInfoBase@@QAEXPBD@Z
+    ARTS_EXPORT void SetIOPath(const char* path);
 
     char FilePath[128] {};
     i32 Type {1234};

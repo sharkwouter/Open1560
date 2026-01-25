@@ -67,8 +67,8 @@ public:
     // ?Get@Stream@@QAEHPAGH@Z
     ARTS_EXPORT isize Get(u16* values, isize count);
 
-    // ?Get@Stream@@QAEHPAKH@Z
-    isize Get(u32* values, isize count);
+    // ?Get@Stream@@QAEHPAIH@Z
+    ARTS_EXPORT isize Get(u32* values, isize count);
 
     // ?Get@Stream@@QAEHPAEH@Z
     ARTS_EXPORT isize Get(u8* values, isize count)
@@ -119,20 +119,20 @@ public:
     // ?Put@Stream@@QAEHG@Z
     ARTS_EXPORT isize Put(u16 value);
 
-    // ?Put@Stream@@QAEHK@Z
-    isize Put(u32 value);
+    // ?Put@Stream@@QAEHI@Z
+    ARTS_EXPORT isize Put(u32 value);
 
     // ?Put@Stream@@QAEHE@Z
     ARTS_EXPORT isize Put(u8 value);
 
-    // ?Put@Stream@@QAEHPAGH@Z
-    isize Put(const u16* values, isize count);
+    // ?Put@Stream@@QAEHPBGH@Z
+    ARTS_EXPORT isize Put(const u16* values, isize count);
 
-    // ?Put@Stream@@QAEHPAKH@Z
-    isize Put(const u32* values, isize count);
+    // ?Put@Stream@@QAEHPBIH@Z
+    ARTS_EXPORT isize Put(const u32* values, isize count);
 
-    // ?Put@Stream@@QAEHPAEH@Z
-    isize Put(const u8* values, isize count);
+    // ?Put@Stream@@QAEHPBEH@Z
+    ARTS_EXPORT isize Put(const u8* values, isize count);
 
     // ?PutCh@Stream@@QAEHE@Z
     i32 PutCh(u8 value)
@@ -171,8 +171,8 @@ public:
     // ?Vprintf@Stream@@QAEHPBDPAD@Z
     isize Vprintf(const char* format, std::va_list va);
 
-    // ?Write@Stream@@QAEHPAXH@Z
-    isize Write(const void* ptr, isize size);
+    // ?Write@Stream@@QAEHPBXH@Z
+    ARTS_EXPORT isize Write(const void* ptr, isize size);
 
     template <typename T>
     T Get();
@@ -227,20 +227,20 @@ private:
 
 check_size(Stream, 0x20);
 
-// ?fgets@@YAHPADHPAVStream@@@Z
-[[deprecated("Use stream->Gets()")]] isize arts_fgets(char* buffer, isize buffer_len, Stream* stream);
+// ?arts_fgets@@YAHPADHPAVStream@@@Z
+ARTS_EXPORT [[deprecated("Use stream->Gets()")]] isize arts_fgets(char* buffer, isize buffer_len, Stream* stream);
 
-// ?fopen@@YAPAVStream@@PAD0@Z
-Owner<Stream> arts_fopen(const char* path, const char* mode);
+// ?arts_fopen@@YAPAVStream@@PBD0@Z
+ARTS_EXPORT Owner<Stream> arts_fopen(const char* path, const char* mode);
 
-// ?fprintf@@YAXPAVStream@@PBDZZ
-void arts_fprintf(Stream* stream, ARTS_FORMAT_STRING const char* format, ...);
+// ?arts_fprintf@@YAXPAVStream@@PBDZZ
+ARTS_EXPORT void arts_fprintf(Stream* stream, ARTS_FORMAT_STRING const char* format, ...);
 
-// ?fscanf@@YAHPAVStream@@PBDZZ
-i32 arts_fscanf(Stream* stream, const char* format, ...);
+// ?arts_fscanf@@YAHPAVStream@@PBDZZ
+ARTS_EXPORT i32 arts_fscanf(Stream* stream, const char* format, ...);
 
-// ?fseek@@YAHPAVStream@@HH@Z
-i32 arts_fseek(Stream* stream, i32 offset, i32 origin);
+// ?arts_fseek@@YAHPAVStream@@HH@Z
+ARTS_EXPORT i32 arts_fseek(Stream* stream, i32 offset, i32 origin);
 
 // ?EnableBinaryFileMapping@@3HA
 ARTS_EXPORT extern b32 EnableBinaryFileMapping;

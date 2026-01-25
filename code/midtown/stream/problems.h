@@ -24,5 +24,5 @@ ARTS_EXPORT void DumpProblems();
 // ?InitProblems@@YAXXZ
 void InitProblems();
 
-// ?RegisterProblem@@YAXPAD00@Z
-void RegisterProblem(const char* message, const char* target, const char* location);
+// ?RegisterProblem@@YAXPBD00@Z
+ARTS_EXPORT void RegisterProblem(const char* message, const char* target, const char* location);

@@ -20,7 +20,8 @@ define_dummy_symbol(mmui_about);
 
 #include "about.h"
 
-void GetProductIdString(char* buffer, i32 buffer_len)
+// ?GetProductIdString@@YAXPADH@Z
+ARTS_EXPORT void GetProductIdString(char* buffer, i32 buffer_len)
 {
     arts_strcpy(buffer, buffer_len, "Open1560");
 }

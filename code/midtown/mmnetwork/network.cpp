@@ -26,7 +26,8 @@ static mem::cmd_param PARAM_dplay {"dplay"};
 
 static HRESULT(WINAPI* Orig_DirectPlayCreate)(LPGUID lpGUID, LPDIRECTPLAY* lplpDP, IUnknown* pUnk);
 
-HRESULT WINAPI netDirectPlayCreate(LPGUID lpGUID, LPDIRECTPLAY* lplpDP, IUnknown* pUnk)
+// ?netDirectPlayCreate@@YGJPAU_GUID@@PAPAUIDirectPlay@@PAUIUnknown@@@Z
+ARTS_EXPORT HRESULT WINAPI netDirectPlayCreate(LPGUID lpGUID, LPDIRECTPLAY* lplpDP, IUnknown* pUnk)
 {
     return Orig_DirectPlayCreate ? Orig_DirectPlayCreate(lpGUID, lplpDP, pUnk) : ERROR_INVALID_FUNCTION;
 }
