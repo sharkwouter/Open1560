@@ -153,9 +153,6 @@ set_sym(None, len(lines))
 
 import_syms, export_syms, dir_imports = get_code_syms()
 
-for sym in import_syms - public_syms:
-    raise Exception(f'Symbol \'{sym}\' referenced from C++ does not exist in ASM')
-
 public_syms = public_syms & import_syms
 
 for sym_name, (start, end, sym_refs) in all_syms.items():
@@ -249,20 +246,30 @@ for folder, imps in sorted(dir_imports.items()):
 
 print(f'\nTotal imported symbols: {len(import_syms)}')
 
-unused_exports = export_syms - visited
+exit_code = None
 
+unused_exports = export_syms - visited
 if unused_exports:
     print('Unused exports:')
     for sym in unused_exports:
         print(sym)
-    exit(1)
+    exit_code = 1
 
 ignored_exports = [ '_', '??_E', '?GetClass', '??_L@YGXPAXIHP6EX0@Z1@Z', '??_M@YGXPAXIHP6EX0@Z@Z', '?Add@?$agiLib@VagiTexParameters@@VagiTexDef@@@@QAEHAAVagiTexParameters@@@Z' ]
 missing_exports = extern_syms.keys() - export_syms
 missing_exports = { sym for sym in missing_exports if not any(sym.startswith(v) for v in ignored_exports) }
-
 if missing_exports:
     print('Missing exports:')
     for sym in missing_exports:
         print(sym)
-    exit(1)
+    exit_code = 1
+
+missing_imports = import_syms - public_syms
+if missing_imports:
+    print('Missing imports:')
+    for sym in missing_imports:
+        print(sym)
+    exit_code = 1
+
+if exit_code:
+    exit(exit_code)
