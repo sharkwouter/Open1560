@@ -68,10 +68,10 @@ using isize = std::ptrdiff_t;
 using ilong = signed long;
 using ulong = unsigned long;
 
-#define _ARTS_LITERAL(NAME, IN_TYPE, OUT_TYPE)                              \
-    ARTS_FORCEINLINE constexpr OUT_TYPE operator"" NAME(IN_TYPE n) noexcept \
-    {                                                                       \
-        return static_cast<OUT_TYPE>(n);                                    \
+#define _ARTS_LITERAL(NAME, IN_TYPE, OUT_TYPE)                               \
+    ARTS_FORCEINLINE constexpr OUT_TYPE operator""##NAME(IN_TYPE n) noexcept \
+    {                                                                        \
+        return static_cast<OUT_TYPE>(n);                                     \
     }
 
 _ARTS_LITERAL(_i8, unsigned long long int, i8);
